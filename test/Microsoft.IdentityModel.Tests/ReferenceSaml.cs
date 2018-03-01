@@ -1285,6 +1285,18 @@ namespace Microsoft.IdentityModel.Tests
                 };
             }
         }
+
+        public static SamlSubjectTestSet SamlSubjectWithComment
+        {
+            get
+            {
+                return new SamlSubjectTestSet
+                {
+                    Subject = new SamlSubject(Default.NameIdentifierFormat, Default.NameQualifier, "user@user.com.evil.com"),
+                    Xml = "<Subject xmlns=\"urn:oasis:names:tc:SAML:1.0:assertion\"><NameIdentifier NameQualifier=\"NameIdentifier\" Format=\"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress\">user@user.com<!---->.evil.com</NameIdentifier></Subject>"
+                };
+            }
+        }
         #endregion
 
         #region SamlSecurityToken

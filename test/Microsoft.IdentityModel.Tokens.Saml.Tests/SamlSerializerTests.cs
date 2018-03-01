@@ -1070,6 +1070,13 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                         SamlSerializer = new SamlSerializerPublic(),
                         SubjectTestSet = ReferenceSaml.SamlSubjectNameIDNotAbsoluteURI,
                         TestId = nameof(ReferenceSaml.SamlSubjectNameIDNotAbsoluteURI)
+                    },
+                    // Tests the behavior of the SamlSerializer when a comment is inserted into the 'Subject' value.
+                    new SamlTheoryData
+                    {
+                        SamlSerializer = new SamlSerializerPublic(),
+                        SubjectTestSet = ReferenceSaml.SamlSubjectWithComment,
+                        TestId = nameof(ReferenceSaml.SamlSubjectWithComment)
                     }
                 };
             }

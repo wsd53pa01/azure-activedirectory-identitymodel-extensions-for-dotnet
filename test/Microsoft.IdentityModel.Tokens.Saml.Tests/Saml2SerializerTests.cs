@@ -197,6 +197,14 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                         Saml2Serializer = new Saml2SerializerPublic(),
                         TestId = "Saml2AttributeEmpty"
                     },
+                    // Tests the behavior of the Saml2Serializer when a comment is inserted into the 'Attribute' value.
+                    new Saml2TheoryData()
+                    {
+                        Attribute = new Saml2Attribute("Email", "cpimft@cpimreflector.onmicrosoft.com"),
+                        Xml = "<Attribute Name=\"Email\" xmlns=\"urn:oasis:names:tc:SAML:2.0:assertion\"><AttributeValue type=\"string\">cpimft@cpimrefle<!--some ignored comment-->ctor.onmicrosoft.com</AttributeValue></Attribute>",
+                        Saml2Serializer = new Saml2SerializerPublic(),
+                        TestId = "Saml2AttributeWithComment"
+                    }
                 };
             }
         }

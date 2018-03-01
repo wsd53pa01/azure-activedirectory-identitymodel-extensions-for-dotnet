@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tests;
 using Microsoft.IdentityModel.Tokens.Saml2;
@@ -915,6 +916,77 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                     }
                 };
             }
+        }
+
+        // Test checks to make sure that we are not susceptible to the following SAML security vulnerability:
+        // https://duo.com/blog/duo-finds-saml-vulnerabilities-affecting-multiple-implementations
+        [Theory, MemberData(nameof(CommentCheckTheoryData))]
+        public void CommentCheck(Saml2TheoryData theoryData)
+        {
+            TestUtilities.WriteHeader($"{this}.CommentCheck", theoryData);
+            var context = new CompareContext($"{this}.CommentCheck, {theoryData}");
+            var handler = new Saml2SecurityTokenHandler();
+            try
+            {
+                var token = handler.CreateToken(theoryData.TokenDescriptor);
+                var tokenXml = handler.WriteToken(token);
+                SecurityToken validatedToken;
+                handler.ValidateToken(tokenXml, theoryData.ValidationParameters, out validatedToken);
+                tokenXml = tokenXml.Replace("user@user.com.evil.com",
+                    theoryData.Issuer);
+                handler.ValidateToken(tokenXml, theoryData.ValidationParameters, out validatedToken);
+                theoryData.ExpectedException.ProcessNoException(context);
+            }
+            catch (Exception ex)
+            {
+                theoryData.ExpectedException.ProcessException(ex, context);
+            }
+
+            TestUtilities.AssertFailIfErrors(context);
+        }
+
+        public static TheoryData<Saml2TheoryData> CommentCheckTheoryData()
+        {
+            var theoryData = new TheoryData<Saml2TheoryData>();
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Expires = DateTime.UtcNow + TimeSpan.FromDays(1),
+                Audience = Default.Audience,
+                SigningCredentials = Default.AsymmetricSigningCredentials,
+                Issuer = "user@user.com.evil.com",
+                Subject = Default.ClaimsIdentity
+            };
+            var validationParameters = new TokenValidationParameters
+            {
+                IssuerSigningKey = Default.AsymmetricSigningKey,
+                ValidAudience = Default.Audience,
+                ValidIssuer = "user@user.com.evil.com",
+                ValidateIssuer = false,
+            };
+
+            // Comment is added into the middle of the issuer value, but assertion signature is unchanged.
+            // Test should pass because the comment is ignored during signature generation.
+            theoryData.Add(new Saml2TheoryData
+            {
+                TestId = "Test1",
+                TokenDescriptor = tokenDescriptor,
+                ValidationParameters = validationParameters,
+                Issuer = "user@user.com<!-- some ignored comment -->.evil.com"
+            });
+
+            // Comment is added at the end of the issuer value, with text belonging to a different domain added in after the comment.
+            // Test should throw an exception because value of the Issuer node is interpreted as:
+            // "user@user.com.evil.com.evildomain.com" which does not match the original assertion signature.
+            theoryData.Add(new Saml2TheoryData
+            {
+                TestId = "Test1",
+                TokenDescriptor = tokenDescriptor,
+                ValidationParameters = validationParameters,
+                Issuer = "user@user.com.evil.com<!-- some ignored comment -->evildomain.com",
+                ExpectedException = new ExpectedException(typeof(SecurityTokenInvalidSignatureException), "IDX10503:")
+            });
+
+            return theoryData;
         }
     }
 

@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Linq;
 using System.Security.Claims;
 using System.Xml;
 using Microsoft.IdentityModel.Tests;
@@ -895,6 +896,77 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
 
                 return theoryData;
             }
+        }
+
+        // Test checks to make sure that we are not susceptible to the following SAML security vulnerability:
+        // https://duo.com/blog/duo-finds-saml-vulnerabilities-affecting-multiple-implementations
+        [Theory, MemberData(nameof(CommentCheckTheoryData))]
+        public void CommentCheck(SamlTheoryData theoryData)
+        {
+            TestUtilities.WriteHeader($"{this}.CommentCheck", theoryData);
+            var context = new CompareContext($"{this}.CommentCheck, {theoryData}");
+            var handler = new SamlSecurityTokenHandler();
+            try
+            {
+                var token = handler.CreateToken(theoryData.TokenDescriptor);
+                var tokenXml = handler.WriteToken(token);
+                SecurityToken validatedToken;
+                handler.ValidateToken(tokenXml, theoryData.ValidationParameters, out validatedToken);
+                tokenXml = tokenXml.Replace("http://user.evil.com",
+                    theoryData.Audiences.First());
+                handler.ValidateToken(tokenXml, theoryData.ValidationParameters, out validatedToken);
+                theoryData.ExpectedException.ProcessNoException(context);
+            }
+            catch (Exception ex)
+            {
+                theoryData.ExpectedException.ProcessException(ex, context);
+            }
+
+            TestUtilities.AssertFailIfErrors(context);
+        }
+
+        public static TheoryData<SamlTheoryData> CommentCheckTheoryData()
+        {
+            var theoryData = new TheoryData<SamlTheoryData>();
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Expires = DateTime.UtcNow + TimeSpan.FromDays(1),
+                Audience = "http://user.evil.com",
+                SigningCredentials = Default.AsymmetricSigningCredentials,
+                Issuer = Default.Issuer,
+                Subject = new ClaimsIdentity(Default.SamlClaims)
+            };
+            var validationParameters = new TokenValidationParameters
+            {
+                IssuerSigningKey = Default.AsymmetricSigningKey,
+                ValidAudience = "http://user.evil.com",
+                ValidIssuer = Default.Issuer,
+                ValidateIssuer = false,
+            };
+
+            // Comment is added into the middle of the issuer value, but assertion signature is unchanged.
+            // Test should pass because the comment is ignored during signature generation.
+            theoryData.Add(new SamlTheoryData
+            {
+                TestId = "Test1",
+                TokenDescriptor = tokenDescriptor,
+                ValidationParameters = validationParameters,
+                Audiences = new List<string> { "http://user.<!-- some ignored comment -->evil.com" }
+            });
+
+            // Comment is added at the end of the issuer value, with text belonging to a different domain added in after the comment.
+            // Test should throw an exception because value of the Issuer node is interpreted as:
+            // "user@user.com.evil.com.evildomain.com" which does not match the original assertion signature.
+            theoryData.Add(new SamlTheoryData
+            {
+                TestId = "Test1",
+                TokenDescriptor = tokenDescriptor,
+                ValidationParameters = validationParameters,
+                Audiences = new List<string> { "http://user.evil.com<!-- some ignored comment -->.evildomain.com" },
+                ExpectedException = new ExpectedException(typeof(SecurityTokenInvalidSignatureException), "IDX10503:")
+            });
+
+            return theoryData;
         }
 
         private class SamlSecurityTokenHandlerPublic : SamlSecurityTokenHandler
