@@ -45,6 +45,21 @@ namespace Microsoft.IdentityModel.JsonWebTokens
     /// </summary>
     public class JsonWebTokenHandler 
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JsonWebTokenHandler"/> class.
+        /// </summary>
+        public JsonWebTokenHandler()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JsonWebTokenHandler"/> class.
+        /// </summary>
+        public JsonWebTokenHandler(TokenCreationPolicy tokenCreationPolicy)
+        {
+            TokenCreationPolicy = tokenCreationPolicy;
+        }
+
         private int _maximumTokenSizeInBytes = TokenValidationParameters.DefaultMaximumTokenSizeInBytes;
 
         /// <summary>
@@ -62,6 +77,11 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 _maximumTokenSizeInBytes = value;
             }
         }
+
+        /// <summary>
+        /// Gets the <see cref="TokenCreationPolicy"/> to be used when creating <see cref="JsonWebToken"/>s using this handler.
+        /// </summary>
+        public TokenCreationPolicy TokenCreationPolicy { get; internal set; }
 
         /// <summary>
         /// Gets the type of the <see cref="JsonWebToken"/>.
@@ -141,19 +161,26 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             if (payload == null)
                 throw LogHelper.LogArgumentNullException(nameof(payload));
 
-            string rawHeader;
-            if (!JsonWebTokenManager.KeyToHeaderCache.TryGetValue(JsonWebTokenManager.GetHeaderCacheKey(signingCredentials), out rawHeader))
+            string rawHeader = null;
+            if (TokenCreationPolicy?.Header == null && !JsonWebTokenManager.KeyToHeaderCache.TryGetValue(JsonWebTokenManager.GetHeaderCacheKey(signingCredentials), out rawHeader))
             {
-                var header = signingCredentials == null ? new JObject() : new JObject
+                var header = signingCredentials == null && TokenCreationPolicy.SigningCredentials == null ? new JObject() : new JObject
                 {
-                    { JwtHeaderParameterNames.Alg, signingCredentials.Algorithm },
-                    { JwtHeaderParameterNames.Kid, signingCredentials.Key.KeyId },
+                    { JwtHeaderParameterNames.Alg, signingCredentials != null ? signingCredentials.Algorithm : TokenCreationPolicy.SigningCredentials.Algorithm},
+                    { JwtHeaderParameterNames.Kid, signingCredentials != null ? signingCredentials.Key.KeyId : TokenCreationPolicy.SigningCredentials.Key.KeyId},
                     { JwtHeaderParameterNames.Typ, JwtConstants.HeaderType }
                 };
 
                 rawHeader = Base64UrlEncoder.Encode(Encoding.UTF8.GetBytes(header.ToString(Newtonsoft.Json.Formatting.None)));
                 JsonWebTokenManager.KeyToHeaderCache.TryAdd(JsonWebTokenManager.GetHeaderCacheKey(signingCredentials), rawHeader);
             }
+
+            // This means that the TokenCreationPolicy has a value for the header.
+            if (rawHeader == null)
+                rawHeader = Base64UrlEncoder.Encode(Encoding.UTF8.GetBytes(TokenCreationPolicy.Header.ToString(Newtonsoft.Json.Formatting.None)));
+
+            payload = TokenCreationPolicy.AddClaims(payload); // add any claims that the TokenCreationPolicy contains.
+            payload = TokenCreationPolicy.PerformClaimsMapping(payload); //perform claims mapping if the policy has one defined
 
             string rawPayload = Base64UrlEncoder.Encode(Encoding.UTF8.GetBytes(payload.ToString(Newtonsoft.Json.Formatting.None)));
             string rawSignature = signingCredentials == null ? string.Empty : JwtTokenUtilities.CreateEncodedSignature(string.Concat(rawHeader, ".", rawPayload), signingCredentials);
