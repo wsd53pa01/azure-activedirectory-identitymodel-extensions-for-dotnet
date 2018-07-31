@@ -37,22 +37,10 @@ namespace Microsoft.IdentityModel.JsonWebTokens
     /// </summary>
     public class TokenCreationPolicy
     {
-
         /// <summary>
         /// Gets or sets the 'expiration' time to be used when creating security tokens.
         /// </summary>
         public DateTime? Expires { get; set; }
-
-        /// <summary>
-        /// Represents the cryptographic operations that will be applied when creating JWT security tokens. 
-        /// May optionally include additional properties of the security token to be created.
-        /// </summary>
-        public JObject Header { get; set; }
-
-        /// <summary>
-        /// Defines the inbound claim type mapping to be used when creating a security token.
-        /// </summary>
-        public IDictionary<string, string> InboundClaimTypeMap { get; set; }
 
         /// <summary>
         /// Gets or sets the 'issued at' time to be used when creating security tokens.
@@ -68,11 +56,6 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// Gets or sets the 'not before' time to be used when creating security tokens.
         /// </summary>
         public DateTime? NotBefore { get; set; }
-
-        /// <summary>
-        /// Gets or sets the <see cref="SigningCredentials"/> used to create security tokens.
-        /// </summary>
-        public SigningCredentials SigningCredentials { get; set; }
 
         /// <summary>
         /// Adds claims contained in this policy to the payload.
