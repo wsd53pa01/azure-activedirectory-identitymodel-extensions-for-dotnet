@@ -301,7 +301,8 @@ namespace Microsoft.IdentityModel.Tokens
             // RSACryptoServiceProviderProxy is only supported on Windows platform
 #if DESKTOP
             _useRSAOeapPadding = algorithm.Equals(SecurityAlgorithms.RsaOAEP, StringComparison.Ordinal)
-                              || algorithm.Equals(SecurityAlgorithms.RsaOaepKeyWrap, StringComparison.Ordinal);
+                              || algorithm.Equals(SecurityAlgorithms.RsaOaepKeyWrap, StringComparison.Ordinal)
+                              || algorithm.Equals(SecurityAlgorithms.RsaOaepMgf1pKeyWrap, StringComparison.Ordinal);
 
             if (rsa is RSACryptoServiceProvider rsaCryptoServiceProvider)
             {
