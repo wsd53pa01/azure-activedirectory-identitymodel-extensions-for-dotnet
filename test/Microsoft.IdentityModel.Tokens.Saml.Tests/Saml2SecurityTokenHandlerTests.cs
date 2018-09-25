@@ -100,7 +100,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
 
         public static TheoryData<Saml2TheoryData> CanReadTokenTheoryData
         {
-            get =>  new TheoryData<Saml2TheoryData>
+            get => new TheoryData<Saml2TheoryData>
             {
                 new Saml2TheoryData
                 {
@@ -334,7 +334,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
 
         public static TheoryData<Saml2TheoryData> RoundTripTokenTheoryData
         {
-            get =>  new TheoryData<Saml2TheoryData>
+            get => new TheoryData<Saml2TheoryData>
             {
                 new Saml2TheoryData
                 {
@@ -478,7 +478,6 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                     NotBefore = Default.NotBefore,
                     Expires = Default.Expires,
                     Issuer = Default.Issuer,
-                    EncryptingCredentials = new EncryptingCredentials(sessionKey, SecurityAlgorithms.Aes128Gcm),
                     SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.RsaSha256Signature, SecurityAlgorithms.Sha256Digest),
                     Subject = new ClaimsIdentity(Default.SamlClaims)
                 };
@@ -489,7 +488,6 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                     NotBefore = Default.NotBefore,
                     Expires = Default.Expires,
                     Issuer = Default.Issuer,
-                    EncryptingCredentials = new X509EncryptingCredentials(KeyingMaterial.CertSelfSigned2048_SHA256_Public),
                     SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.RsaSha256Signature, SecurityAlgorithms.Sha256Digest),
                     Subject = new ClaimsIdentity(Default.SamlClaims)
                 };
@@ -619,7 +617,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
 
         public static TheoryData<Saml2TheoryData> RoundTripActorTheoryData
         {
-            get =>  new TheoryData<Saml2TheoryData>
+            get => new TheoryData<Saml2TheoryData>
             {
                 new Saml2TheoryData
                 {
@@ -1188,6 +1186,10 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                 var encryptingCredentials_PreSharedSessionKey_Valid = new EncryptingCredentials(sessionKey, SecurityAlgorithms.Aes128Gcm);
                 var encryptingCredentials_X509_Valid = new X509EncryptingCredentials(KeyingMaterial.DefaultCert_2048);
 
+                //SET HELPER CRYPTO PROVIDER FACTORY - remove when AES-GCM is released and supported
+                encryptingCredentials_PreSharedSessionKey_Valid.CryptoProviderFactory = new AesGcmProviderFactory();
+                encryptingCredentials_X509_Valid.CryptoProviderFactory = new AesGcmProviderFactory();
+
                 var tokenDescriptor_PreSharedSessionKey_Valid = CreateTokenDescriptor(signingCredentials_Valid, encryptingCredentials_PreSharedSessionKey_Valid);
                 var tokenDescriptor_KeyWrap_Valid = CreateTokenDescriptor(signingCredentials_Valid, encryptingCredentials_X509_Valid);
 
@@ -1215,11 +1217,65 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
 
                 theoryData.Add(new Saml2TheoryData
                 {
+                    SecurityToken = tokenHandler.CreateToken(tokenDescriptor_PreSharedSessionKey_Valid) as Saml2SecurityToken,
+                    ExpectedException = ExpectedException.NoExceptionExpected,
+                    ValidationParameters = CreateTokenValidationParameters(signingKey, sessionKey),
+                    Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_DifferentPrefixes_Valid,
+                    TestId = nameof(ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_DifferentPrefixes_Valid),
+                });
+
+                theoryData.Add(new Saml2TheoryData
+                {
                     SecurityToken = tokenHandler.CreateToken(tokenDescriptor_KeyWrap_Valid) as Saml2SecurityToken,
                     ExpectedException = ExpectedException.NoExceptionExpected,
                     ValidationParameters = CreateTokenValidationParameters(signingKey, KeyingMaterial.DefaultX509Key_2048_With_KeyId),
                     Token = ReferenceTokens.Saml2Token_EncryptedAssertion_KeyWrap_Valid,
                     TestId = nameof(ReferenceTokens.Saml2Token_EncryptedAssertion_KeyWrap_Valid),
+                });
+
+                theoryData.Add(new Saml2TheoryData
+                {
+                    SecurityToken = tokenHandler.CreateToken(tokenDescriptor_PreSharedSessionKey_Valid) as Saml2SecurityToken,
+                    ExpectedException = new ExpectedException(typeof(SecurityTokenDecryptionFailedException), "IDX10620: Decryption failed."),
+                    ValidationParameters = CreateTokenValidationParameters(signingKey, sessionKey),
+                    Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_BadContent_Invalid,
+                    TestId = nameof(ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_BadContent_Invalid),
+                });
+
+                theoryData.Add(new Saml2TheoryData
+                {
+                    SecurityToken = tokenHandler.CreateToken(tokenDescriptor_PreSharedSessionKey_Valid) as Saml2SecurityToken,
+                    ExpectedException = new ExpectedException(typeof(XmlReadException), "IDX30011"),
+                    ValidationParameters = CreateTokenValidationParameters(signingKey, sessionKey),
+                    Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_NoXencNamespace_Invalid,
+                    TestId = nameof(ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_NoXencNamespace_Invalid),
+                });
+
+                theoryData.Add(new Saml2TheoryData
+                {
+                    SecurityToken = tokenHandler.CreateToken(tokenDescriptor_PreSharedSessionKey_Valid) as Saml2SecurityToken,
+                    ExpectedException = new ExpectedException(typeof(XmlReadException), "IDX30011"),
+                    ValidationParameters = CreateTokenValidationParameters(signingKey, sessionKey),
+                    Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_BadNamespace_Invalid,
+                    TestId = nameof(ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_BadNamespace_Invalid),
+                });
+
+                theoryData.Add(new Saml2TheoryData
+                {
+                    SecurityToken = tokenHandler.CreateToken(tokenDescriptor_PreSharedSessionKey_Valid) as Saml2SecurityToken,
+                    ExpectedException = new ExpectedException(typeof(XmlReadException), "IDX30011"),
+                    ValidationParameters = CreateTokenValidationParameters(signingKey, sessionKey),
+                    Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_BadNamespace_v2_Invalid,
+                    TestId = nameof(ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_BadNamespace_v2_Invalid),
+                });
+
+                theoryData.Add(new Saml2TheoryData
+                {
+                    SecurityToken = tokenHandler.CreateToken(tokenDescriptor_PreSharedSessionKey_Valid) as Saml2SecurityToken,
+                    ExpectedException = new ExpectedException(typeof(XmlReadException), "IDX30011"),
+                    ValidationParameters = CreateTokenValidationParameters(signingKey, sessionKey),
+                    Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_BadNamespace_v3_Invalid,
+                    TestId = nameof(ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_BadNamespace_v3_Invalid),
                 });
 
                 theoryData.Add(new Saml2TheoryData
@@ -1260,15 +1316,6 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
 
                 theoryData.Add(new Saml2TheoryData
                 {
-                    SecurityToken = tokenHandler.CreateToken(tokenDescriptor_PreSharedSessionKey_Valid) as Saml2SecurityToken,
-                    ValidationParameters = CreateTokenValidationParameters(signingKey, sessionKey),
-                    Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_EncryptionAlgorithmNotSupported_Invalid,
-                    ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenEncryptedAssertionDecryptionException), "IDX13623"),
-                    TestId = nameof(ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_EncryptionAlgorithmNotSupported_Invalid),
-                });
-
-                theoryData.Add(new Saml2TheoryData
-                {
                     SecurityToken = tokenHandler.CreateToken(tokenDescriptor_KeyWrap_Valid) as Saml2SecurityToken,
                     ValidationParameters = CreateTokenValidationParameters(signingKey, KeyingMaterial.DefaultX509Key_2048_With_KeyId),
                     Token = ReferenceTokens.Saml2Token_EncryptedAssertion_KeyWrap_NoEncryptionAlgorithm_Invalid,
@@ -1283,15 +1330,6 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                     Token = ReferenceTokens.Saml2Token_EncryptedAssertion_KeyWrap_NoEncryptionAlgorithm_v2_Invalid,
                     ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenEncryptedAssertionDecryptionException), "IDX13611"),
                     TestId = nameof(ReferenceTokens.Saml2Token_EncryptedAssertion_KeyWrap_NoEncryptionAlgorithm_v2_Invalid),
-                });
-
-                theoryData.Add(new Saml2TheoryData
-                {
-                    SecurityToken = tokenHandler.CreateToken(tokenDescriptor_KeyWrap_Valid) as Saml2SecurityToken,
-                    ValidationParameters = CreateTokenValidationParameters(signingKey, KeyingMaterial.DefaultX509Key_2048_With_KeyId),
-                    Token = ReferenceTokens.Saml2Token_EncryptedAssertion_KeyWrap_EncryptionAlgorithmNotSupported_Invalid,
-                    ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenEncryptedAssertionDecryptionException), "IDX13623"),
-                    TestId = nameof(ReferenceTokens.Saml2Token_EncryptedAssertion_KeyWrap_EncryptionAlgorithmNotSupported_Invalid),
                 });
 
                 theoryData.Add(new Saml2TheoryData
@@ -1438,18 +1476,6 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                     TestId = nameof(ReferenceTokens.Saml2Token_EncryptedAssertion_KeyWrap_NoCipherValue_v2_Invalid),
                 });
 
-                // Uncomment test below when AES-GCM implementation is introduced
-                /*
-                theoryData.Add(new Saml2TheoryData
-                {
-                    SecurityToken = tokenHandler.CreateToken(tokenDescriptor_PreSharedSessionKey_Valid) as Saml2SecurityToken,
-                    ValidationParameters = CreateTokenValidationParameters(signingKey, wrongSessionKey),
-                    Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_Valid,
-                    ExpectedException = new ExpectedException(typeof(SecurityTokenEncryptionFailedException), "IDX10618"),
-                    TestId = nameof(ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_Valid) + "_wrong_decrypting_session_key",
-                });
-                */
-
                 theoryData.Add(new Saml2TheoryData
                 {
                     SecurityToken = tokenHandler.CreateToken(tokenDescriptor_KeyWrap_Valid) as Saml2SecurityToken,
@@ -1457,15 +1483,6 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                     Token = ReferenceTokens.Saml2Token_EncryptedAssertion_KeyWrap_Valid,
                     ExpectedException = new ExpectedException(typeof(SecurityTokenKeyWrapException), "IDX10659"),
                     TestId = nameof(ReferenceTokens.Saml2Token_EncryptedAssertion_KeyWrap_Valid) + "_wrong_keyunwrap_key",
-                });
-
-                theoryData.Add(new Saml2TheoryData
-                {
-                    SecurityToken = tokenHandler.CreateToken(tokenDescriptor_PreSharedSessionKey_Valid) as Saml2SecurityToken,
-                    ValidationParameters = CreateTokenValidationParameters(signingKey, sessionKey),
-                    Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_192_Invalid,
-                    ExpectedException = new ExpectedException(typeof(ArgumentOutOfRangeException), "IDX10653"),
-                    TestId = nameof(ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_192_Invalid) + "_wrong_decrypting_session_key",
                 });
 
                 theoryData.Add(new Saml2TheoryData
@@ -1486,6 +1503,58 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                     TestId = nameof(ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_NamespaceMissing_Invalid),
                 });
 
+                // Uncomment tests below - when AES-GCM is released and supported
+                /*
+                theoryData.Add(new Saml2TheoryData
+                {
+                    SecurityToken = tokenHandler.CreateToken(tokenDescriptor_PreSharedSessionKey_Valid) as Saml2SecurityToken,
+                    ValidationParameters = CreateTokenValidationParameters(signingKey, wrongSessionKey),
+                    Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_Valid,
+                    ExpectedException = new ExpectedException(typeof(SecurityTokenEncryptionFailedException), "IDX10618"),
+                    TestId = nameof(ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_Valid) + "_wrong_decrypting_session_key",
+                });
+
+                theoryData.Add(new Saml2TheoryData
+                {
+                    SecurityToken = tokenHandler.CreateToken(tokenDescriptor_PreSharedSessionKey_Valid) as Saml2SecurityToken,
+                    ValidationParameters = CreateTokenValidationParameters(signingKey, sessionKey),
+                    Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_192_Invalid,
+                    ExpectedException = new ExpectedException(typeof(ArgumentOutOfRangeException), "IDX10653"),
+                    TestId = nameof(ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_192_Invalid) + "_wrong_decrypting_session_key",
+                });
+
+                theoryData.Add(new Saml2TheoryData
+                {
+                    SecurityToken = tokenHandler.CreateToken(tokenDescriptor_KeyWrap_Valid) as Saml2SecurityToken,
+                    ValidationParameters = CreateTokenValidationParameters(signingKey, KeyingMaterial.DefaultX509Key_2048_With_KeyId),
+                    Token = ReferenceTokens.Saml2Token_EncryptedAssertion_KeyWrap_EncryptionAlgorithmNotSupported_Invalid,
+                    ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenEncryptedAssertionDecryptionException), "IDX13623"),
+                    TestId = nameof(ReferenceTokens.Saml2Token_EncryptedAssertion_KeyWrap_EncryptionAlgorithmNotSupported_Invalid),
+                });
+
+                theoryData.Add(new Saml2TheoryData
+                {
+                    SecurityToken = tokenHandler.CreateToken(tokenDescriptor_PreSharedSessionKey_Valid) as Saml2SecurityToken,
+                    ValidationParameters = CreateTokenValidationParameters(signingKey, sessionKey),
+                    Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_EncryptionAlgorithmNotSupported_Invalid,
+                    ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenEncryptedAssertionDecryptionException), "IDX13623"),
+                    TestId = nameof(ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_EncryptionAlgorithmNotSupported_Invalid),
+                });
+                */
+
+                // Throws as unsupported AES-GCM is used - remove when AES-GCM is released and supported
+                var encryptingCredentials_PreSharedSessionKey_AESGCM = new EncryptingCredentials(sessionKey, SecurityAlgorithms.Aes128Gcm);
+                var validationParams = CreateTokenValidationParameters(signingKey, sessionKey);
+                validationParams.CryptoProviderFactory = null;
+                tokenDescriptor_PreSharedSessionKey_Valid = CreateTokenDescriptor(signingCredentials_Valid, encryptingCredentials_PreSharedSessionKey_AESGCM);
+                theoryData.Add(new Saml2TheoryData
+                {
+                    SecurityToken = tokenHandler.CreateToken(tokenDescriptor_PreSharedSessionKey_Valid) as Saml2SecurityToken,
+                    ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenEncryptedAssertionDecryptionException), "IDX13623"),
+                    ValidationParameters = validationParams,
+                    Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_Valid,
+                    TestId = "EncryptedAssertion_PreSharedSessionKey_AESGCM",
+                });
 
 
                 return theoryData;
@@ -1504,7 +1573,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                 IdentityComparer.AreEqual(saml2Token.Assertion.Encrypted, true, context);
 
                 if (string.IsNullOrEmpty(saml2Token.Assertion.EncryptedAssertion))
-                        context.Diffs.Add("!Assertion.EncryptedAssertion string should not be empty if Saml2Assertion.Encrypted == True");
+                    context.Diffs.Add("!Assertion.EncryptedAssertion string should not be empty if Saml2Assertion.Encrypted == True");
 
                 theoryData.ExpectedException.ProcessNoException(context);
             }
@@ -1526,9 +1595,16 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                 var signingCredentials_Valid = new SigningCredentials(key, SecurityAlgorithms.RsaSha256Signature, SecurityAlgorithms.Sha256Digest);
                 var encryptingCredentials_PreSharedSessionKey_Valid = new EncryptingCredentials(sessionKey, SecurityAlgorithms.Aes128Gcm);
                 var encryptingCredentials_X509_Valid = new X509EncryptingCredentials(KeyingMaterial.DefaultCert_2048);
-                var encryptingCredentials_X509_AlgNotSupported= new X509EncryptingCredentials(KeyingMaterial.DefaultCert_2048, SecurityAlgorithms.RsaOAEP, SecurityAlgorithms.Aes128Gcm);
+                var encryptingCredentials_X509_AlgNotSupported = new X509EncryptingCredentials(KeyingMaterial.DefaultCert_2048, SecurityAlgorithms.RsaOAEP, SecurityAlgorithms.Aes128Gcm);
                 var encryptingCredentials_X509_EncNotSupported = new X509EncryptingCredentials(KeyingMaterial.DefaultCert_2048, SecurityAlgorithms.RsaOaepMgf1pKeyWrap, SecurityAlgorithms.Aes128CbcHmacSha256);
                 var encryptingCredentials_PreSharedSessionKey_AlgNotNone = new EncryptingCredentials(sessionKey, SecurityAlgorithms.RsaOaepMgf1pKeyWrap, SecurityAlgorithms.Aes128Gcm);
+
+                //SET HELPER CRYPTO PROVIDER FACTORY - remove when AES-GCM is released and supported
+                encryptingCredentials_PreSharedSessionKey_Valid.CryptoProviderFactory = new AesGcmProviderFactory();
+                encryptingCredentials_X509_Valid.CryptoProviderFactory = new AesGcmProviderFactory();
+                encryptingCredentials_X509_AlgNotSupported.CryptoProviderFactory = new AesGcmProviderFactory();
+                encryptingCredentials_X509_EncNotSupported.CryptoProviderFactory = new AesGcmProviderFactory();
+                encryptingCredentials_PreSharedSessionKey_AlgNotNone.CryptoProviderFactory = new AesGcmProviderFactory();
 
                 var tokenDescriptor_PreSharedSessionKey_Valid = CreateTokenDescriptor(signingCredentials_Valid, encryptingCredentials_PreSharedSessionKey_Valid);
                 var tokenDescriptor_KeyWrap_Valid = CreateTokenDescriptor(signingCredentials_Valid, encryptingCredentials_X509_Valid);
@@ -1575,6 +1651,17 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                     TestId = "EncryptedAssertion_PreSharedSessionKey_AlgNotNone",
                 });
 
+
+                // Throws as unsupported AES-GCM is used - remove when AES-GCM is released and supported
+                var encryptingCredentials_PreSharedSessionKey_AESGCM = new EncryptingCredentials(sessionKey, SecurityAlgorithms.Aes128Gcm);
+                tokenDescriptor_PreSharedSessionKey_Valid = CreateTokenDescriptor(signingCredentials_Valid, encryptingCredentials_PreSharedSessionKey_AESGCM);
+                theoryData.Add(new Saml2TheoryData
+                {
+                    SecurityToken = tokenHandler.CreateToken(tokenDescriptor_PreSharedSessionKey_Valid) as Saml2SecurityToken,
+                    ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenEncryptedAssertionEncryptionException), "IDX13601"),
+                    TestId = "EncryptedAssertion_PreSharedSessionKey_AESGCM",
+                });
+
                 return theoryData;
             }
         }
@@ -1584,10 +1671,10 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
         {
             var context = TestUtilities.WriteHeader($"{this}.WriteEncryptedToken", theoryData);
             context.PropertiesToIgnoreWhenComparing = new Dictionary<Type, List<string>>
-            {
-                { typeof(Saml2Assertion), new List<string> { "IssueInstant", "Signature", "SigningCredentials", "EncryptingCredentials" } },
-                { typeof(Saml2SecurityToken), new List<string> { "SigningKey" } },
-            };
+             {
+                 { typeof(Saml2Assertion), new List<string> { "IssueInstant", "Signature", "SigningCredentials", "EncryptingCredentials" } },
+                 { typeof(Saml2SecurityToken), new List<string> { "SigningKey" } },
+             };
 
             try
             {
@@ -1630,6 +1717,14 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                 var encryptingCredentials_KeyWrap_192_RSAOAEP = new X509EncryptingCredentials(KeyingMaterial.DefaultCert_2048, SecurityAlgorithms.RsaOaepMgf1pKeyWrap, SecurityAlgorithms.Aes192Gcm);
                 var encryptingCredentials_KeyWrap_256_RSAOAEP = new X509EncryptingCredentials(KeyingMaterial.DefaultCert_2048, SecurityAlgorithms.RsaOaepMgf1pKeyWrap, SecurityAlgorithms.Aes256Gcm);
 
+                //SET HELPER CRYPTO PROVIDER FACTORY - remove when AES-GCM is released and supported
+                encryptingCredentials128_PreShared.CryptoProviderFactory = new AesGcmProviderFactory();
+                encryptingCredentials192_PreShared.CryptoProviderFactory = new AesGcmProviderFactory();
+                encryptingCredentials256_PreShared.CryptoProviderFactory = new AesGcmProviderFactory();
+                encryptingCredentials_KeyWrap_128_RSAOAEP.CryptoProviderFactory = new AesGcmProviderFactory();
+                encryptingCredentials_KeyWrap_192_RSAOAEP.CryptoProviderFactory = new AesGcmProviderFactory();
+                encryptingCredentials_KeyWrap_256_RSAOAEP.CryptoProviderFactory = new AesGcmProviderFactory();
+
                 // token descriptors
                 var tokenDescriptor_128_PreShared = CreateTokenDescriptor(signingCredentials, encryptingCredentials128_PreShared);
                 var tokenDescriptor_192_PreShared = CreateTokenDescriptor(signingCredentials, encryptingCredentials192_PreShared);
@@ -1645,7 +1740,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                     NotBefore = Default.NotBefore,
                     Expires = Default.Expires,
                     Issuer = Default.Issuer,
-                    EncryptingCredentials =  new X509EncryptingCredentials(KeyingMaterial.DefaultCert_2048), // encrypt with 'one-time-use' session key and wrap a session key using public cert
+                    EncryptingCredentials = new X509EncryptingCredentials(KeyingMaterial.DefaultCert_2048), // encrypt with 'one-time-use' session key and wrap a session key using public cert
                     SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.RsaSha256Signature, SecurityAlgorithms.Sha256Digest),
                     Subject = new ClaimsIdentity(Default.SamlClaims)
                 };
@@ -1732,6 +1827,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                 ValidateLifetime = false,
                 ValidateTokenReplay = false,
                 ValidateActor = false,
+                CryptoProviderFactory = new AesGcmProviderFactory(), // //SET HELPER CRYPTO PROVIDER FACTORY - remove when AES-GCM is released and supported
             };
         }
 

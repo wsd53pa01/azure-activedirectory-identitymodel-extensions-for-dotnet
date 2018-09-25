@@ -188,6 +188,7 @@ namespace Microsoft.IdentityModel.Tokens
         public const string IDX10689 = "IDX10689: Unable to create an ECDsa object. See inner exception for more details.";
         public const string IDX10690 = "IDX10690: ECDsa creation is not supported by NETSTANDARD1.4, when running on platforms other than Windows. For more details, see https://aka.ms/IdentityModel/create-ecdsa";
         public const string IDX10691 = "IDX10691: Unable to create an ECDsa object, internal CreateECDsaFunction is not available.";
+        public const string IDX10688 = "IDX10688: The algorithm '{0}' is not currently supported. In order to use the algorithm '{0}' one should create custom CryptoProviderFactory and AuthenticatedEncryptionProvider.";
 
         // security keys
         public const string IDX10700 = "IDX10700: Invalid RsaParameters: '{0}'. Both modulus and exponent should be present";
