@@ -116,7 +116,7 @@ namespace Microsoft.IdentityModel.Tokens
         public const string IDX10616 = "IDX10616: Encryption failed. EncryptionProvider failed for: Algorithm: '{0}', SecurityKey: '{1}'. See inner exception.";
         public const string IDX10617 = "IDX10617: Encryption failed. Keywrap is only supported for: '{0}', '{1}' and '{2}'. The content encryption specified is: '{3}'.";
         public const string IDX10618 = "IDX10618: Encryption failed. EncryptionProvider failed for: Algorithm: '{0}'. See inner exception.";
-        public const string IDX10619 = "IDX10619: Encryption failed. EncryptionProvider failed for: Algorithm: '{0}'. See inner exception.";
+        public const string IDX10619 = "IDX10619: Decryption failed. EncryptionProvider failed for: Algorithm: '{0}'. See inner exception.";
         public const string IDX10620 = "IDX10620: Decryption failed. Cipher-text size is less than 1.";
 
         // Formating
