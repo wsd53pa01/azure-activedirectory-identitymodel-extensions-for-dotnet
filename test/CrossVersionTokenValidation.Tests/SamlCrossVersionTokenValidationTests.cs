@@ -144,7 +144,9 @@ namespace Microsoft.IdentityModel.CrossVersionTokenValidation.Tests
                             Expires = expires,
                             Issuer = Default.Issuer,
                             SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.RsaSha256Signature, SecurityAlgorithms.Sha256Digest),
+                            #pragma warning disable 0618
                             Subject = new ClaimsIdentity(Default.SamlClaims)
+                            #pragma warning restore 0618
                         },
                         ValidationParameters4x = new TokenValidationParameters4x
                         {
@@ -194,7 +196,9 @@ namespace Microsoft.IdentityModel.CrossVersionTokenValidation.Tests
                             Expires = expires,
                             Issuer = Default.Issuer,
                             SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.RsaSha256Signature, SecurityAlgorithms.Sha256Digest),
+                            #pragma warning disable 0618
                             Subject = new ClaimsIdentity(Default.SamlClaims)
+                            #pragma warning restore 0618
                         },
                         ValidationParameters4x = new TokenValidationParameters4x
                         {

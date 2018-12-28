@@ -183,12 +183,12 @@ namespace Microsoft.IdentityModel.Tokens
         public const string IDX10684 = "IDX10684: Unable to create a AsymmetricAdapter, Algorithm: '{0}', Key: '{1}'.";
         public const string IDX10685 = "IDX10685: Unable to Sign, Internal SignFunction is not available.";
         public const string IDX10686 = "IDX10686: Unable to Verify, Internal VerifyFunction is not available.";
-        public const string IDX10687 = "IDX10687: Unable to create a AsymmetricAdapter. For NET45 or NET451 only types: '{0}' or '{1}' are supported. RSA is of type: '{2}'..";
+        public const string IDX10687 = "IDX10687: Unable to create a AsymmetricAdapter. For NET45 or NET451 only types: '{0}' or '{1}' are supported. RSA is of type: '{2}'.";
         //public const string IDX10688 = "IDX10688:";
         public const string IDX10689 = "IDX10689: Unable to create an ECDsa object. See inner exception for more details.";
         public const string IDX10690 = "IDX10690: ECDsa creation is not supported by NETSTANDARD1.4, when running on platforms other than Windows. For more details, see https://aka.ms/IdentityModel/create-ecdsa";
         public const string IDX10691 = "IDX10691: Unable to create an ECDsa object, internal CreateECDsaFunction is not available.";
-        public const string IDX10688 = "IDX10688: The algorithm '{0}' is not currently supported. In order to use the algorithm '{0}' one should create custom CryptoProviderFactory and AuthenticatedEncryptionProvider.";
+        public const string IDX10692 = "IDX10692: The algorithm '{0}' is not currently supported. It's possible to provide your own implementation of the algorithm by overriding CryptoProviderFactory and AuthenticatedEncryptionProvider. Example: aka.ms/identitymodel-aesgcm-support";
 
         // security keys
         public const string IDX10700 = "IDX10700: Invalid RsaParameters: '{0}'. Both modulus and exponent should be present";

@@ -153,7 +153,9 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation.Tests
                             IssuedAt = Default.IssueInstant,
                             Issuer = Default.Issuer,
                             SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.RsaSha256Signature, SecurityAlgorithms.Sha256Digest),
+#pragma warning disable 0618
                             Subject = new ClaimsIdentity(Default.SamlClaims)
+#pragma warning restore 0618
                         }
                 );
 
@@ -169,7 +171,9 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation.Tests
                             IssuedAt = Default.IssueInstant,
                             Issuer = Default.Issuer,
                             SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.RsaSha256Signature, SecurityAlgorithms.Sha256Digest),
+#pragma warning disable 0618
                             Subject = new ClaimsIdentity(Default.SamlClaims)
+#pragma warning restore 0618
                         }
                 );
 

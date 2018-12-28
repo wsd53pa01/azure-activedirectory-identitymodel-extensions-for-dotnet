@@ -346,7 +346,9 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                         Audience = Default.Audience,
                         SigningCredentials = Default.AsymmetricSigningCredentials,
                         Issuer = Default.Issuer,
+                        #pragma warning disable 0618
                         Subject = Default.ClaimsIdentity
+                        #pragma warning restore 0618
                     },
                     ValidationParameters = new TokenValidationParameters
                     {
@@ -364,7 +366,9 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                         Audience = Default.Audience,
                         SigningCredentials = KeyingMaterial.RsaSigningCreds_2048,
                         Issuer = Default.Issuer,
+                        #pragma warning disable 0618
                         Subject = Default.ClaimsIdentity
+                        #pragma warning restore 0618
                     },
                     ValidationParameters = new TokenValidationParameters
                     {
@@ -382,7 +386,9 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                         Audience = Default.Audience,
                         SigningCredentials = KeyingMaterial.RsaSigningCreds_2048_FromRsa,
                         Issuer = Default.Issuer,
+                        #pragma warning disable 0618
                         Subject = Default.ClaimsIdentity
+                        #pragma warning restore 0618
                     },
                     ValidationParameters = new TokenValidationParameters
                     {
@@ -400,7 +406,9 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                         Audience = Default.Audience,
                         SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
                         Issuer = Default.Issuer,
+                        #pragma warning disable 0618
                         Subject = Default.ClaimsIdentity
+                        #pragma warning restore 0618
                     },
                     ValidationParameters = new TokenValidationParameters
                     {
@@ -419,7 +427,9 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
             CompareContext context = new CompareContext($"{this}.RoundTripActor, {theoryData}");
 
             var handler = theoryData.Handler as Saml2SecurityTokenHandlerPublic;
+#pragma warning disable 0618
             var actor = handler.CreateActorStringPublic(theoryData.TokenDescriptor.Subject);
+#pragma warning restore 0618
         }
 
         [Theory, MemberData(nameof(WriteTokenTheoryData))]
@@ -469,7 +479,9 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                     Expires = Default.Expires,
                     Issuer = Default.Issuer,
                     SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.RsaSha256Signature, SecurityAlgorithms.Sha256Digest),
+#pragma warning disable 0618
                     Subject = new ClaimsIdentity(Default.SamlClaims)
+#pragma warning restore 0618
                 };
 
                 var tokenDescriptorWithPreSharedEncryptingCredentials = new SecurityTokenDescriptor
@@ -479,7 +491,9 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                     Expires = Default.Expires,
                     Issuer = Default.Issuer,
                     SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.RsaSha256Signature, SecurityAlgorithms.Sha256Digest),
+#pragma warning disable 0618
                     Subject = new ClaimsIdentity(Default.SamlClaims)
+#pragma warning restore 0618
                 };
 
                 var tokenDescriptorWithEncryptingCredentials = new SecurityTokenDescriptor
@@ -489,7 +503,9 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                     Expires = Default.Expires,
                     Issuer = Default.Issuer,
                     SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.RsaSha256Signature, SecurityAlgorithms.Sha256Digest),
+#pragma warning disable 0618
                     Subject = new ClaimsIdentity(Default.SamlClaims)
+#pragma warning restore 0618
                 };
 
                 var validationParameters = new TokenValidationParameters
@@ -626,7 +642,9 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                     TestId = nameof(ClaimSets.DefaultClaimsIdentity),
                     TokenDescriptor = new SecurityTokenDescriptor
                     {
+                        #pragma warning disable 0618
                         Subject = ClaimSets.DefaultClaimsIdentity
+                        #pragma warning restore 0618
                     }
                 }
             };
@@ -646,7 +664,9 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                 Issuer = Default.Issuer,
                 Audience = Default.Audience,
                 SigningCredentials = Default.AsymmetricSigningCredentials,
+#pragma warning disable 0618
                 Subject = new ClaimsIdentity()
+#pragma warning restore 0618
             };
 
             var token = tokenHandler.CreateToken(descriptorNoTimeValues);
@@ -1783,7 +1803,9 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                     Issuer = Default.Issuer,
                     EncryptingCredentials = new X509EncryptingCredentials(KeyingMaterial.DefaultCert_2048), // encrypt with 'one-time-use' session key and wrap a session key using public cert
                     SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.RsaSha256Signature, SecurityAlgorithms.Sha256Digest),
+#pragma warning disable 0618
                     Subject = new ClaimsIdentity(Default.SamlClaims)
+#pragma warning restore 0618
                 };
 
                 var tokenHandler = new Saml2SecurityTokenHandler();
@@ -1878,7 +1900,9 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                 Issuer = Default.Issuer,
                 SigningCredentials = signingCredentials,
                 EncryptingCredentials = encryptingCredentials,
+#pragma warning disable 0618
                 Subject = new ClaimsIdentity(Default.SamlClaims),
+#pragma warning restore 0618
             };
         }
 

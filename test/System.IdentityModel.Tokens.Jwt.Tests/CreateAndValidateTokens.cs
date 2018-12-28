@@ -194,6 +194,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
         [Theory, MemberData(nameof(RoundTripTokensUsingCacheTheoryData))]
         public void RoundTripTokensUsingCache(JwtTheoryData theoryData)
         {
+#pragma warning disable 0618
             var handler = new JwtSecurityTokenHandler();
             handler.InboundClaimTypeMap.Clear();
             var encodedJwt1 = handler.CreateEncodedJwt(theoryData.TokenDescriptor);
@@ -226,6 +227,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 theoryData.TokenDescriptor.IssuedAt,
                 theoryData.TokenDescriptor.SigningCredentials,
                 theoryData.TokenDescriptor.EncryptingCredentials);
+#pragma warning restore 0618
             var encodedJwt3 = handler.WriteToken(jwtToken3);
             var encodedJwt4 = handler.WriteToken(jwtToken4);
             var encodedJwt5 = handler.WriteToken(jwtToken5);
@@ -416,6 +418,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
         [Theory, MemberData(nameof(RoundTripTokensTheoryData))]
         public void RoundTripTokens(JwtTheoryData theoryData)
         {
+#pragma warning disable 0618
             var handler = new JwtSecurityTokenHandler();
             handler.InboundClaimTypeMap.Clear();
             var encodedJwt1 = handler.CreateEncodedJwt(theoryData.TokenDescriptor);
@@ -448,6 +451,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 theoryData.TokenDescriptor.IssuedAt,
                 theoryData.TokenDescriptor.SigningCredentials,
                 theoryData.TokenDescriptor.EncryptingCredentials);
+#pragma warning restore 0618
             var encodedJwt3 = handler.WriteToken(jwtToken3);
             var encodedJwt4 = handler.WriteToken(jwtToken4);
             var encodedJwt5 = handler.WriteToken(jwtToken5);
@@ -683,7 +687,9 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 (
                 tokenDescriptor.Issuer,
                 tokenDescriptor.Audience,
+#pragma warning disable 0618
                 tokenDescriptor.Subject,
+#pragma warning restore 0618
                 tokenDescriptor.NotBefore,
                 tokenDescriptor.Expires,
                 tokenDescriptor.IssuedAt,
@@ -1146,7 +1152,9 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             {
                 EncryptingCredentials = new EncryptingCredentials(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaOAEP, SecurityAlgorithms.Aes128CbcHmacSha256),
                 SigningCredentials = new SigningCredentials(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaSha256),
+#pragma warning disable 0618
                 Subject = ClaimSets.DefaultClaimsIdentity
+#pragma warning restore 0618
             };
             var handler = new JwtSecurityTokenHandler();
             var jwtToken = handler.CreateJwtSecurityToken(tokenDescriptor);
