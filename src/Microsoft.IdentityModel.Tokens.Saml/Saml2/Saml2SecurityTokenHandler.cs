@@ -34,6 +34,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Xml;
 using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens.Saml2;
 using Microsoft.IdentityModel.Xml;
 using static Microsoft.IdentityModel.Logging.LogHelper;
 
@@ -47,7 +48,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
     public class Saml2SecurityTokenHandler : SecurityTokenHandler
     {
         private const string _actor = "Actor";
-        private Saml2Serializer _serializer = new Saml2Serializer();
+        private Saml2Serializer _serializer = new Saml2Serializer(new EncryptedAssertionHandler());
 
         /// <summary>
         /// Gets or set the <see cref="Saml2Serializer"/> that will be used to read and write a <see cref="Saml2SecurityToken"/>.
@@ -199,7 +200,8 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
             // if an assertion is encrypted - decrypt it first
             if (IsSaml2EncryptedAssertion(token))
             {
-                token = DecryptAssertion(token, validationParameters);
+                var encryptedAssertion = Serializer.ReadEncryptedAssertion(token);
+                token = Serializer.DecryptAssertion(encryptedAssertion, validationParameters, token);
             }
 
             var samlToken = ValidateSignature(token, validationParameters);
@@ -393,18 +395,6 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
             if (validationParameters.IssuerSigningKeys != null)
                 foreach (SecurityKey key in validationParameters.IssuerSigningKeys)
                     yield return key;
-        }
-
-        private string DecryptAssertion(string assertion, TokenValidationParameters validationParameters)
-        {
-            if (string.IsNullOrEmpty(assertion))
-                throw LogArgumentNullException(nameof(assertion));
-
-            if (validationParameters == null)
-                throw LogArgumentNullException(nameof(validationParameters));
-
-            var encryptedAssertion = Serializer.ReadEncryptedAssertion(assertion);
-            return Serializer.DecryptAssertion(encryptedAssertion, validationParameters, assertion);
         }
 
         /// <summary>

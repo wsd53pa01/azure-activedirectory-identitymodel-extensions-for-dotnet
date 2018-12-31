@@ -34,19 +34,23 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
     /// <summary>
     /// Represents the <see cref="Saml2EncryptedAssertion"/> element.
     /// </summary>
-    internal class Saml2EncryptedAssertion
+    public class Saml2EncryptedAssertion
     {
         /// <summary>
         /// Represents the <see cref="EncryptedData"/> element in XML encryption.
         /// </summary>
-        internal EncryptedData EncryptedData { get; set; }
+        public EncryptedData EncryptedData { get; set; }
 
         /// <summary>
         /// Represents the <see cref="EncryptedKey"/> element in XML encryption.
         /// </summary>
-        internal EncryptedKey EncryptedKey { get; set; }
+        public EncryptedKey EncryptedKey { get; set; }
 
-        internal virtual void ReadXml(XmlDictionaryReader reader)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="reader"></param>
+        public virtual void ReadXml(XmlDictionaryReader reader)
         {
             if (reader == null)
                 throw LogHelper.LogArgumentNullException(nameof(reader));
@@ -66,7 +70,11 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
             }
         }
 
-        internal virtual void WriteXml(XmlWriter writer)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="writer"></param>
+        public virtual void WriteXml(XmlWriter writer)
         {
             if (writer == null)
                 throw LogHelper.LogArgumentNullException(nameof(writer));
