@@ -1069,80 +1069,70 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                 {
                     First = true,
                     Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_Valid,
-                    PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "Advice" } },
-                    ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenEncryptedAssertionException), "IDX13608: Saml2Assertion is encrypted. Unable to get 'Advice'"),
+                    PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "Advice" }, { "AssertionPropertyExpectedValue", null } },
                     TestId = "EncryptedAssertion_Access_Advice",
                 });
 
                 theoryData.Add(new Saml2TheoryData
                 {
                     Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_Valid,
-                    PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "Conditions" } },
-                    ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenEncryptedAssertionException), "IDX13608: Saml2Assertion is encrypted. Unable to get 'Conditions'"),
+                    PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "Conditions" }, { "AssertionPropertyExpectedValue", null } },
                     TestId = "EncryptedAssertion_Access_Conditions",
                 });
 
                 theoryData.Add(new Saml2TheoryData
                 {
                     Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_Valid,
-                    PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "Id" } },
-                    ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenEncryptedAssertionException), "IDX13608: Saml2Assertion is encrypted. Unable to get 'Id'"),
+                    PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "Id" }, { "AssertionPropertyExpectedValue", null } },
                     TestId = "EncryptedAssertion_Access_Id",
                 });
 
                 theoryData.Add(new Saml2TheoryData
                 {
                     Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_Valid,
-                    PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "IssueInstant" } },
-                    ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenEncryptedAssertionException), "IDX13608: Saml2Assertion is encrypted. Unable to get 'IssueInstant'"),
+                    PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "IssueInstant" }, { "AssertionPropertyExpectedValue", DateTime.MinValue } },
                     TestId = "EncryptedAssertion_Access_IssueInstantConditions",
                 });
 
                 theoryData.Add(new Saml2TheoryData
                 {
                     Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_Valid,
-                    PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "Issuer" } },
-                    ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenEncryptedAssertionException), "IDX13608: Saml2Assertion is encrypted. Unable to get 'Issuer'"),
+                    PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "Issuer" }, { "AssertionPropertyExpectedValue", null } },
                     TestId = "EncryptedAssertion_Access_Issuer",
                 });
 
                 theoryData.Add(new Saml2TheoryData
                 {
                     Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_Valid,
-                    PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "InclusiveNamespacesPrefixList" } },
-                    ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenEncryptedAssertionException), "IDX13608: Saml2Assertion is encrypted. Unable to get 'InclusiveNamespacesPrefixList'"),
+                    PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "InclusiveNamespacesPrefixList" }, { "AssertionPropertyExpectedValue", null } },
                     TestId = "EncryptedAssertion_Access_InclusiveNamespacesPrefixList",
                 });
 
                 theoryData.Add(new Saml2TheoryData
                 {
                     Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_Valid,
-                    PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "SigningCredentials" } },
-                    ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenEncryptedAssertionException), "IDX13608: Saml2Assertion is encrypted. Unable to get 'SigningCredentials'"),
+                    PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "SigningCredentials" }, { "AssertionPropertyExpectedValue", null } },
                     TestId = "EncryptedAssertion_Access_SigningCredentials",
                 });
 
                 theoryData.Add(new Saml2TheoryData
                 {
                     Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_Valid,
-                    PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "Subject" } },
-                    ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenEncryptedAssertionException), "IDX13608: Saml2Assertion is encrypted. Unable to get 'Subject'"),
+                    PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "Subject" }, { "AssertionPropertyExpectedValue", null } },
                     TestId = "EncryptedAssertion_Access_Subject",
                 });
 
                 theoryData.Add(new Saml2TheoryData
                 {
                     Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_Valid,
-                    PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "Statements" } },
-                    ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenEncryptedAssertionException), "IDX13608: Saml2Assertion is encrypted. Unable to get 'Statements'"),
+                    PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "Statements" }, { "AssertionPropertyExpectedValue", null } },
                     TestId = "EncryptedAssertion_Access_Statements",
                 });
 
                 theoryData.Add(new Saml2TheoryData
                 {
                     Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_Valid,
-                    PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "Signature" } },
-                    ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenEncryptedAssertionException), "IDX13608: Saml2Assertion is encrypted. Unable to get 'Signature'"),
+                    PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "Signature" }, { "AssertionPropertyExpectedValue", null } },
                     TestId = "EncryptedAssertion_Access_Signature",
                 });
 
@@ -1150,7 +1140,6 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                 {
                     Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_Valid,
                     PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "Version" }, { "AssertionPropertyExpectedValue", "2.0" } },
-                    ExpectedException = ExpectedException.NoExceptionExpected,
                     TestId = "EncryptedAssertion_Access_Version",
                 });
 
@@ -1158,7 +1147,6 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                 {
                     Token = ReferenceTokens.Saml2Token_EncryptedAssertion_SessionKey_Valid,
                     PropertyBag = new Dictionary<string, object> { { "AssertionPropertyName", "EncryptingCredentials" }, { "AssertionPropertyExpectedValue", null} },
-                    ExpectedException = ExpectedException.NoExceptionExpected,
                     TestId = "EncryptedAssertion_Access_EncryptingCredentials",
                 });
 

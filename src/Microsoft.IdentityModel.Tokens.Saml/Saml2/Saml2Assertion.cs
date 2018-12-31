@@ -64,14 +64,14 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
 
         /// <summary>
         /// Gets or sets the <see cref="Signature"/> on the Assertion.
+        /// Returns <c>null</c> if the <see cref="Saml2Assertion"/> is encrypted.
         /// </summary>
-        /// <exception cref="Saml2SecurityTokenEncryptedAssertionException"> If this assertion is encrypted.</exception>
         public Signature Signature
         {
             get
             {
                 if (Encrypted)
-                    throw LogExceptionMessage(new Saml2SecurityTokenEncryptedAssertionException(FormatInvariant(LogMessages.IDX13608, nameof(Signature))));
+                    return null;
 
                 return _signature;
             }
@@ -82,14 +82,14 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
         /// Gets or sets additional information related to the assertion that assists processing in certain
         /// situations but which may be ignored by applications that do not understand the 
         /// advice or do not wish to make use of it. [Saml2Core, 2.3.3]
+        /// Returns <c>null</c> if the <see cref="Saml2Assertion"/> is encrypted.
         /// </summary>
-        /// <exception cref="Saml2SecurityTokenEncryptedAssertionException"> If this assertion is encrypted.</exception>
         public Saml2Advice Advice
         {
             get
             {
                 if (Encrypted)
-                    throw LogExceptionMessage(new Saml2SecurityTokenEncryptedAssertionException(FormatInvariant(LogMessages.IDX13608, nameof(Advice))));
+                    return null;
 
                 return _advice;
             }
@@ -99,14 +99,14 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
         /// <summary>
         /// Gets or sets conditions that must be evaluated when assessing the validity of and/or
         /// when using the assertion. [Saml2Core 2.3.3]
+        /// Returns <c>null</c> if the <see cref="Saml2Assertion"/> is encrypted.
         /// </summary>
-        /// <exception cref="Saml2SecurityTokenEncryptedAssertionException"> If this assertion is encrypted.</exception>
         public Saml2Conditions Conditions
         {
             get
             {
                 if (Encrypted)
-                    throw LogExceptionMessage(new Saml2SecurityTokenEncryptedAssertionException(FormatInvariant(LogMessages.IDX13608, nameof(Conditions))));
+                    return null;
 
                 return _conditions;
             }
@@ -115,15 +115,15 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
 
         /// <summary>
         /// Gets or sets the <see cref="Saml2Id"/> identifier for this assertion. [Saml2Core, 2.3.3]
+        /// Returns <c>null</c> if the <see cref="Saml2Assertion"/> is encrypted.
         /// </summary>
-        /// <exception cref="Saml2SecurityTokenEncryptedAssertionException"> If this assertion is encrypted.</exception>
         /// <exception cref="ArgumentNullException">if 'value' if null.</exception>
         public Saml2Id Id
         {
             get
             {
                 if (Encrypted)
-                    throw LogExceptionMessage(new Saml2SecurityTokenEncryptedAssertionException(FormatInvariant(LogMessages.IDX13608, nameof(Id))));
+                    return null;
 
                 return _id;
             }
@@ -132,15 +132,15 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
 
         /// <summary>
         /// Gets or sets the time instant of issue in UTC. [Saml2Core, 2.3.3]
+        /// Returns <see cref="DateTime.MinValue"/> if the <see cref="Saml2Assertion"/> is encrypted.
         /// </summary>
-        /// <exception cref="Saml2SecurityTokenEncryptedAssertionException"> If this assertion is encrypted.</exception>
         /// <exception cref="ArgumentNullException">if 'value' if null.</exception>
         public DateTime IssueInstant
         {
             get
             {
                 if (Encrypted)
-                    throw LogExceptionMessage(new Saml2SecurityTokenEncryptedAssertionException(FormatInvariant(LogMessages.IDX13608, nameof(IssueInstant))));
+                    return DateTime.MinValue;
 
                 return _issueInstant;
             }
@@ -155,15 +155,15 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
 
         /// <summary>
         /// Gets or sets the <see cref="Saml2NameIdentifier"/> as the authority that is making the claim(s) in the assertion. [Saml2Core, 2.3.3]
+        /// Returns <c>null</c> if the <see cref="Saml2Assertion"/> is encrypted.
         /// </summary>
-        /// <exception cref="Saml2SecurityTokenEncryptedAssertionException"> If this assertion is encrypted.</exception>
         /// <exception cref="ArgumentNullException">if 'value' if null.</exception>
         public Saml2NameIdentifier Issuer
         {
             get
             {
                 if (Encrypted)
-                    throw LogExceptionMessage(new Saml2SecurityTokenEncryptedAssertionException(FormatInvariant(LogMessages.IDX13608, nameof(Issuer))));
+                    return null;
 
                 return _issuer;
             }
@@ -172,14 +172,14 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
 
         /// <summary>
         /// Gets or sets the a PrefixList to use when there is a need to include InclusiveNamespaces writing token.
+        /// Returns <c>null</c> if the <see cref="Saml2Assertion"/> is encrypted.
         /// </summary>
-        /// <exception cref="Saml2SecurityTokenEncryptedAssertionException"> If this assertion is encrypted.</exception>
         public string InclusiveNamespacesPrefixList
         {
             get
             {
                 if (Encrypted)
-                    throw LogExceptionMessage(new Saml2SecurityTokenEncryptedAssertionException(FormatInvariant(LogMessages.IDX13608, nameof(InclusiveNamespacesPrefixList))));
+                    return null;
 
                 return _inclusiveNamespacesPrefixList;
             }
@@ -188,14 +188,14 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
 
         /// <summary>
         /// Gets or sets the <see cref="SigningCredentials"/> used by the issuer to protect the integrity of the assertion.
+        /// Returns <c>null</c> if the <see cref="Saml2Assertion"/> is encrypted.
         /// </summary>
-        /// <exception cref="Saml2SecurityTokenEncryptedAssertionException"> If this assertion is encrypted.</exception>
         public SigningCredentials SigningCredentials
         {
             get
             {
                 if (Encrypted)
-                    throw LogExceptionMessage(new Saml2SecurityTokenEncryptedAssertionException(FormatInvariant(LogMessages.IDX13608, nameof(SigningCredentials))));
+                    return null;
 
                 return _signingCredentials;
             }
@@ -204,14 +204,14 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
 
         /// <summary>
         /// Gets or sets the <see cref="Saml2Subject"/> of the statement(s) in the assertion. [Saml2Core, 2.3.3]
+        /// Returns <c>null</c> if the <see cref="Saml2Assertion"/> is encrypted.
         /// </summary>
-        /// <exception cref="Saml2SecurityTokenEncryptedAssertionException"> If this assertion is encrypted.</exception>
         public Saml2Subject Subject
         {
             get
             {
                 if (Encrypted)
-                    throw LogExceptionMessage(new Saml2SecurityTokenEncryptedAssertionException(FormatInvariant(LogMessages.IDX13608, nameof(Subject))));
+                    return null;
 
                 return _subject;
             }
@@ -221,14 +221,14 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
 
         /// <summary>
         /// Gets the <see cref="Saml2Statement"/>(s) regarding the subject.
+        /// Returns <c>null</c> if the <see cref="Saml2Assertion"/> is encrypted.
         /// </summary>
-        /// <exception cref="Saml2SecurityTokenEncryptedAssertionException"> If this assertion is encrypted.</exception>
         public ICollection<Saml2Statement> Statements
         {
             get
             {
                 if (Encrypted)
-                    throw LogExceptionMessage(new Saml2SecurityTokenEncryptedAssertionException(FormatInvariant(LogMessages.IDX13608, nameof(Statements))));
+                    return null;
 
                 return _statements;
             }
