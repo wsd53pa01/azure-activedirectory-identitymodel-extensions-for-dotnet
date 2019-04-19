@@ -39,7 +39,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
     /// <summary>
     /// A <see cref="SecurityToken"/> designed for representing a JSON Web Token (JWT). 
     /// </summary>
-    public class JsonWebToken : SecurityToken
+    public class JsonWebToken : JwtToken
     {
         /// <summary>
         /// Initializes a new instance of <see cref="JsonWebToken"/> from a string in JWS or JWE Compact serialized format.
@@ -111,19 +111,19 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// Gets the 'value' of the 'actort' claim { actort, 'value' }.
         /// </summary>
         /// <remarks>If the 'actort' claim is not found, an empty string is returned.</remarks> 
-        public string Actor => Payload.Value<string>(JwtRegisteredClaimNames.Actort) ?? string.Empty;
+        public override string Actor => Payload.Value<string>(JwtRegisteredClaimNames.Actort) ?? string.Empty;
 
         /// <summary>
         /// Gets the 'value' of the 'alg' claim { alg, 'value' }.
         /// </summary>
         /// <remarks>If the 'alg' claim is not found, an empty string is returned.</remarks>   
-        public string Alg => Header.Value<string>(JwtHeaderParameterNames.Alg) ?? string.Empty;
+        public override string Alg => Header.Value<string>(JwtHeaderParameterNames.Alg) ?? string.Empty;
 
         /// <summary>
         /// Gets the list of 'aud' claim { aud, 'value' }.
         /// </summary>
         /// <remarks>If the 'aud' claim is not found, enumeration will be empty.</remarks>
-        public IEnumerable<string> Audiences
+        public override IEnumerable<string> Audiences
         {
             get
             {
@@ -154,7 +154,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// <summary>
         /// Gets a <see cref="IEnumerable{Claim}"/><see cref="Claim"/> for each JSON { name, value }.
         /// </summary>
-        public virtual IEnumerable<Claim> Claims
+        public override IEnumerable<Claim> Claims
         {
             get
             {
@@ -200,13 +200,13 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// Gets the 'value' of the 'cty' claim { cty, 'value' }.
         /// </summary>
         /// <remarks>If the 'cty' claim is not found, an empty string is returned.</remarks>   
-        public string Cty => Header.Value<string>(JwtHeaderParameterNames.Cty) ?? string.Empty;
+        public override string Cty => Header.Value<string>(JwtHeaderParameterNames.Cty) ?? string.Empty;
 
         /// <summary>
         /// Gets the 'value' of the 'enc' claim { enc, 'value' }.
         /// </summary>
         /// <remarks>If the 'enc' value is not found, an empty string is returned.</remarks>   
-        public string Enc => Header.Value<string>(JwtHeaderParameterNames.Enc) ?? string.Empty;
+        public override string Enc => Header.Value<string>(JwtHeaderParameterNames.Enc) ?? string.Empty;
 
         /// <summary>
         /// Gets the EncryptedKey from the original raw data of this instance when it was created.
@@ -240,7 +240,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// Gets the 'value' of the 'iat' claim { iat, 'value' } converted to a <see cref="DateTime"/> assuming 'value' is seconds since UnixEpoch (UTC 1970-01-01T0:0:0Z).
         /// </summary>
         /// <remarks>If the 'iat' claim is not found, then <see cref="DateTime.MinValue"/> is returned.</remarks>
-        public DateTime IssuedAt => JwtTokenUtilities.GetDateTime(JwtRegisteredClaimNames.Iat, Payload);
+        public override DateTime IssuedAt => JwtTokenUtilities.GetDateTime(JwtRegisteredClaimNames.Iat, Payload);
 
         /// <summary>
         /// Gets the 'value' of the 'iss' claim { iss, 'value' }.
@@ -252,7 +252,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// Gets the 'value' of the 'kid' claim { kid, 'value' }.
         /// </summary>
         /// <remarks>If the 'kid' claim is not found, an empty string is returned.</remarks>   
-        public string Kid => Header.Value<string>(JwtHeaderParameterNames.Kid) ?? string.Empty;
+        public override string Kid => Header.Value<string>(JwtHeaderParameterNames.Kid) ?? string.Empty;
 
         /// <summary>
         /// Represents the JSON payload.
@@ -300,13 +300,13 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// Gets the 'value' of the 'sub' claim { sub, 'value' }.
         /// </summary>
         /// <remarks>If the 'sub' claim is not found, an empty string is returned.</remarks>   
-        public string Subject => Payload.Value<string>(JwtRegisteredClaimNames.Sub) ?? string.Empty;
+        public override string Subject => Payload.Value<string>(JwtRegisteredClaimNames.Sub) ?? string.Empty;
 
         /// <summary>
         /// Gets the 'value' of the 'typ' claim { typ, 'value' }.
         /// </summary>
         /// <remarks>If the 'typ' claim is not found, an empty string is returned.</remarks>   
-        public string Typ => Header.Value<string>(JwtHeaderParameterNames.Typ) ?? string.Empty;
+        public override string Typ => Header.Value<string>(JwtHeaderParameterNames.Typ) ?? string.Empty;
 
         /// <summary>
         /// Gets the 'value' of the 'nbf' claim { nbf, 'value' } converted to a <see cref="DateTime"/> assuming 'value' is seconds since UnixEpoch (UTC 1970-01-01T0:0:0Z).
@@ -324,13 +324,13 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// Gets the 'value' of the 'x5t' claim { x5t, 'value' }.
         /// </summary>
         /// <remarks>If the 'x5t' claim is not found, an empty string is returned.</remarks>   
-        public string X5t => Header.Value<string>(JwtHeaderParameterNames.X5t) ?? string.Empty;
+        public override string X5t => Header.Value<string>(JwtHeaderParameterNames.X5t) ?? string.Empty;
 
         /// <summary>
         /// Gets the 'value' of the 'zip' claim { zip, 'value' }.
         /// </summary>
         /// <remarks>If the 'zip' claim is not found, an empty string is returned.</remarks>   
-        public string Zip => Header.Value<string>(JwtHeaderParameterNames.Zip) ?? String.Empty;
+        public override string Zip => Header.Value<string>(JwtHeaderParameterNames.Zip) ?? String.Empty;
 
         /// <summary>
         /// Decodes the string into the header, payload and signature.
@@ -492,7 +492,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// Gets the 'value' corresponding to the provided key from the JWT payload { key, 'value' }.
         /// </summary>
         /// <remarks>If the key has no corresponding value, returns null. </remarks>   
-        public T GetPayloadValue<T>(string key)
+        public override T GetPayloadValue<T>(string key)
         {
             if (string.IsNullOrEmpty(key))
                 throw LogHelper.LogArgumentNullException(nameof(key));
@@ -517,7 +517,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// Tries to get the 'value' corresponding to the provided key from the JWT payload { key, 'value' }.
         /// </summary>
         /// <remarks>If the key has no corresponding value, returns false. Otherwise returns true. </remarks>   
-        public bool TryGetPayloadValue<T>(string key, out T value)
+        public override bool TryGetPayloadValue<T>(string key, out T value)
         {
             if (string.IsNullOrEmpty(key))
             {
@@ -548,7 +548,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// Gets the 'value' corresponding to the provided key from the JWT header { key, 'value' }.
         /// </summary>
         /// <remarks>If the key has no corresponding value, returns null. </remarks>   
-        public T GetHeaderValue<T>(string key)
+        public override T GetHeaderValue<T>(string key)
         {
             if (string.IsNullOrEmpty(key))
                 throw LogHelper.LogArgumentNullException(nameof(key));
@@ -573,7 +573,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// Tries to get the value corresponding to the provided key from the JWT header { key, 'value' }.
         /// </summary>
         /// <remarks>If the key has no corresponding value, returns false. Otherwise returns true. </remarks>   
-        public bool TryGetHeaderValue<T>(string key, out T value)
+        public override bool TryGetHeaderValue<T>(string key, out T value)
         {
             if (string.IsNullOrEmpty(key))
             {

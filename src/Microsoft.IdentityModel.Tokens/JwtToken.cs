@@ -31,116 +31,89 @@ using System.Security.Claims;
 
 namespace Microsoft.IdentityModel.Tokens
 {
-    interface IJsonWebToken
+    /// <summary>
+    /// Base class for a JWT security token.
+    /// </summary>
+    public abstract class JwtToken : SecurityToken
     {
         /// <summary>
         /// Gets the 'value' of the 'actort' claim { actort, 'value' }.
         /// </summary>
-        string Actor { get; set; }
+        public abstract string Actor { get; }
 
         /// <summary>
         /// Gets the 'value' of the 'alg' claim { alg, 'value' }.
         /// </summary>
-        string Alg { get; set; }
+        public abstract string Alg { get; }
 
         /// <summary>
         /// Gets the list of 'aud' claim { aud, 'value' }.
         /// </summary>
-        IEnumerable<string> Audiences { get; set; }
+        public abstract IEnumerable<string> Audiences { get; }
 
         /// <summary>
         /// Gets a <see cref="IEnumerable{Claim}"/><see cref="Claim"/> for each JSON { name, value }.
         /// </summary>
-        IEnumerable<Claim> Claims { get; set; }
+        public abstract IEnumerable<Claim> Claims { get; }
 
         /// <summary>
         /// Gets the 'value' of the 'cty' claim { cty, 'value' }.
         /// </summary>
-        string Cty { get; set; }
+        public abstract string Cty { get; }
 
         /// <summary>
         /// Gets the 'value' of the 'enc' claim { enc, 'value' }.
         /// </summary>
-        string Enc { get; set; }
-
-        /// <summary>
-        /// Gets the 'value' of the 'jti' claim { jti, ''value' }.
-        /// </summary>
-        string Id { get; set; }
+        public abstract string Enc { get; }
 
         /// <summary>
         /// Gets the 'value' of the 'iat' claim { iat, 'value' } converted to a <see cref="DateTime"/> assuming 'value' is seconds since UnixEpoch (UTC 1970-01-01T0:0:0Z).
         /// </summary>
-        DateTime IssuedAt { get; set; }
-
-        /// <summary>
-        /// Gets the 'value' of the 'iss' claim { iss, 'value' }.
-        /// </summary>
-        string Issuer { get; set; }
+        public abstract DateTime IssuedAt { get; }
 
         /// <summary>
         /// Gets the 'value' of the 'kid' claim { kid, 'value' }.
         /// </summary>
-        string Kid { get; set; }
-
-        /// <summary>
-        /// Gets the <see cref="SecurityKey"/>s for this instance.
-        /// </summary>
-        SecurityKey SecurityKey { get; }
-
-        /// <summary>
-        /// Gets or sets the <see cref="SecurityKey"/> that signed this instance.
-        /// </summary>
-        SecurityKey SigningKey { get; set; }
+        public abstract string Kid { get; }
 
         /// <summary>
         /// Gets the 'value' of the 'sub' claim { sub, 'value' }.
         /// </summary>
-        string Subject { get; set; }
+        public abstract string Subject { get; }
 
         /// <summary>
         /// Gets the 'value' of the 'typ' claim { typ, 'value' }.
         /// </summary>
-        string Typ { get; set; }
-
-        /// <summary>
-        /// Gets the 'value' of the 'nbf' claim { nbf, 'value' } converted to a <see cref="DateTime"/> assuming 'value' is seconds since UnixEpoch (UTC 1970-01-01T0:0:0Z).
-        /// </summary>
-        DateTime ValidFrom { get; set; }
-
-        /// <summary>
-        /// Gets the 'value' of the 'exp' claim { exp, 'value' } converted to a <see cref="DateTime"/> assuming 'value' is seconds since UnixEpoch (UTC 1970-01-01T0:0:0Z).
-        /// </summary>
-        DateTime ValidTo { get; set; }
+        public abstract string Typ { get; }
 
         /// <summary>
         /// Gets the 'value' of the 'x5t' claim { x5t, 'value' }.
         /// </summary>
-        string X5t { get; set; }
+        public abstract string X5t { get; }
 
         /// <summary>
         /// Gets the 'value' of the 'zip' claim { zip, 'value' }.
         /// </summary>
-        string Zip { get; set; }
+        public abstract string Zip { get; }
 
         /// <summary>
         /// Gets the 'value' corresponding to the provided key from the JWT payload { key, 'value' }.
         /// </summary>
-        T GetPayloadValue<T>(string key);
+        public abstract T GetPayloadValue<T>(string key);
 
         /// <summary>
         /// Tries to get the 'value' corresponding to the provided key from the JWT payload { key, 'value' }.
         /// </summary>
-        bool TryGetPayloadValue<T>(string key, out T value);
+        public abstract bool TryGetPayloadValue<T>(string key, out T value);
 
         /// <summary>
         /// Gets the 'value' corresponding to the provided key from the JWT header { key, 'value' }.
         /// </summary>
-        T GetHeaderValue<T>(string key);
+        public abstract T GetHeaderValue<T>(string key);
 
         /// <summary>
         /// Tries to get the value corresponding to the provided key from the JWT header { key, 'value' }.
         /// </summary>
-        bool TryGetHeaderValue<T>(string key, out T value);
+        public abstract bool TryGetHeaderValue<T>(string key, out T value);
     }
 }
