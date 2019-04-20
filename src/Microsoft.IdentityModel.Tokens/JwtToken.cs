@@ -37,83 +37,86 @@ namespace Microsoft.IdentityModel.Tokens
     public abstract class JwtToken : SecurityToken
     {
         /// <summary>
-        /// Gets the 'value' of the 'actort' claim { actort, 'value' }.
+        /// This must be overridden to get the Actor of this <see cref="JwtToken"/>.
         /// </summary>
         public abstract string Actor { get; }
 
         /// <summary>
-        /// Gets the 'value' of the 'alg' claim { alg, 'value' }.
+        /// This must be overridden to get the Algorithm used when signing this <see cref="JwtToken"/>.
         /// </summary>
         public abstract string Alg { get; }
 
         /// <summary>
-        /// Gets the list of 'aud' claim { aud, 'value' }.
+        /// This must be overridden to get the Audiences of this <see cref="JwtToken"/>.
         /// </summary>
         public abstract IEnumerable<string> Audiences { get; }
 
         /// <summary>
-        /// Gets a <see cref="IEnumerable{Claim}"/><see cref="Claim"/> for each JSON { name, value }.
+        /// This must be overriden to get the <see cref="Claim"/>s for each value in the JWT payload.
         /// </summary>
         public abstract IEnumerable<Claim> Claims { get; }
 
         /// <summary>
-        /// Gets the 'value' of the 'cty' claim { cty, 'value' }.
+        /// This must be overridden to get the Content Type of this <see cref="JwtToken"/>.
         /// </summary>
         public abstract string Cty { get; }
 
         /// <summary>
-        /// Gets the 'value' of the 'enc' claim { enc, 'value' }.
+        /// This must be overridden to get the Encryption Algorithm of this <see cref="JwtToken"/>.
         /// </summary>
         public abstract string Enc { get; }
 
         /// <summary>
-        /// Gets the 'value' of the 'iat' claim { iat, 'value' } converted to a <see cref="DateTime"/> assuming 'value' is seconds since UnixEpoch (UTC 1970-01-01T0:0:0Z).
+        /// This must be overridden to get the time this <see cref="JwtToken"/> was issued at.
         /// </summary>
         public abstract DateTime IssuedAt { get; }
 
         /// <summary>
-        /// Gets the 'value' of the 'kid' claim { kid, 'value' }.
+        /// This must be overridden to get the key ID of this <see cref="JwtToken"/>.
         /// </summary>
         public abstract string Kid { get; }
 
         /// <summary>
-        /// Gets the 'value' of the 'sub' claim { sub, 'value' }.
+        /// This must be overridden to get the Subject of this <see cref="JwtToken"/>.
         /// </summary>
         public abstract string Subject { get; }
 
         /// <summary>
-        /// Gets the 'value' of the 'typ' claim { typ, 'value' }.
+        /// This must be overridden to get the Type of this <see cref="JwtToken"/>.
         /// </summary>
         public abstract string Typ { get; }
 
         /// <summary>
-        /// Gets the 'value' of the 'x5t' claim { x5t, 'value' }.
+        /// This must be overriden to get the X509 Certificate Thumbprint associated with this <see cref="JwtToken"/>.
         /// </summary>
         public abstract string X5t { get; }
 
         /// <summary>
-        /// Gets the 'value' of the 'zip' claim { zip, 'value' }.
+        /// This must be overridden to get the Compression Algorithm of this <see cref="JwtToken"/>.
         /// </summary>
         public abstract string Zip { get; }
 
         /// <summary>
-        /// Gets the 'value' corresponding to the provided key from the JWT payload { key, 'value' }.
+        /// This must be overriden to obtain a 'value' corresponding to the provided key from the JWT payload { key, 'value' }.
         /// </summary>
         public abstract T GetPayloadValue<T>(string key);
 
         /// <summary>
-        /// Tries to get the 'value' corresponding to the provided key from the JWT payload { key, 'value' }.
+        /// This must be overriden to get the 'value' corresponding to the provided key from the JWT payload { key, 'value' }.
         /// </summary>
+        /// <remarks>This should return 'true' if 'value' is found, and 'false' otherwise.</remarks>
+
         public abstract bool TryGetPayloadValue<T>(string key, out T value);
 
         /// <summary>
-        /// Gets the 'value' corresponding to the provided key from the JWT header { key, 'value' }.
+        /// This must be overriden to get the 'value' corresponding to the provided key from the JWT header { key, 'value' }.
         /// </summary>
         public abstract T GetHeaderValue<T>(string key);
 
         /// <summary>
-        /// Tries to get the value corresponding to the provided key from the JWT header { key, 'value' }.
+        /// This must be overriden to get the 'value' corresponding to the provided key from the JWT header { key, 'value' }.
         /// </summary>
+        /// <remarks>This should return 'true' if 'value' is found, and 'false' otherwise.</remarks>
         public abstract bool TryGetHeaderValue<T>(string key, out T value);
     }
 }
