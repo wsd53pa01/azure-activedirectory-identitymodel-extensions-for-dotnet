@@ -37,7 +37,7 @@ namespace System.IdentityModel.Tokens.Jwt
     /// <summary>
     /// A <see cref="SecurityToken"/> designed for representing a JSON Web Token (JWT).
     /// </summary>
-    public class JwtSecurityToken : JwtToken
+    public class JwtSecurityToken : SecurityToken, IJsonWebToken
     {
         private JwtPayload _payload;
 
@@ -214,7 +214,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// Gets the 'value' of the 'actor' claim { actort, 'value' }.
         /// </summary>
         /// <remarks>If the 'actor' claim is not found, an empty string is returned.</remarks> 
-        public override string Actor
+        public string Actor
         {
             get
             {
@@ -229,7 +229,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// Gets the 'value' of the 'alg' claim { alg, 'value' } from the <see cref="JwtHeader"/>.
         /// </summary>
         /// <remarks>If the 'alg' claim is not found, an empty string is returned.</remarks> 
-        public override string Alg
+        public string Alg
         {
             get
             {
@@ -243,7 +243,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// Gets the list of 'audience' claim { aud, 'value' }.
         /// </summary>
         /// <remarks>If the 'audience' claim is not found, enumeration will be empty.</remarks>
-        public override IEnumerable<string> Audiences
+        public IEnumerable<string> Audiences
         {
             get
             {
@@ -259,7 +259,7 @@ namespace System.IdentityModel.Tokens.Jwt
         ///  the unencrypted claims should be read from the header seperately.
         /// </summary>
         /// <remarks><para><see cref="Claim"/>(s) returned will NOT have the <see cref="Claim.Type"/> translated according to <see cref="JwtSecurityTokenHandler.InboundClaimTypeMap"/></para></remarks>
-        public override IEnumerable<Claim> Claims
+        public IEnumerable<Claim> Claims
         {
             get
             {
@@ -273,7 +273,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// Gets the 'value' of the 'cty' claim { cty, 'value' } from the <see cref="JwtHeader"/>.
         /// </summary>
         /// <remarks>If the 'cty' claim is not found, an empty string is returned.</remarks> 
-        public override string Cty
+        public string Cty
         {
             get
             {
@@ -287,7 +287,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// Gets the 'value' of the 'enc' claim { enc, 'value' } from the <see cref="JwtHeader"/>.
         /// </summary>
         /// <remarks>If the 'enc' claim is not found, an empty string is returned.</remarks> 
-        public override string Enc
+        public string Enc
         {
             get
             {
@@ -342,7 +342,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// This value is converted to a <see cref="DateTime"/> assuming 'value' is seconds since UnixEpoch (UTC 1970-01-01T0:0:0Z).
         /// </summary>
         /// <remarks>If the 'iat' claim is not found, then <see cref="DateTime.MinValue"/> is returned.</remarks>
-        public override DateTime IssuedAt
+        public DateTime IssuedAt
         {
             get
             {
@@ -395,7 +395,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// Gets the 'value' of the 'kid' claim { kid, 'value' } from the <see cref="JwtHeader"/>.  
         /// </summary>
         /// <remarks>If the 'kid' claim is not found, an empty string is returned.</remarks>
-        public override string Kid
+        public string Kid
         {
             get
             { 
@@ -490,7 +490,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// Gets the 'value' of the 'typ' claim { typ, 'value' } from the <see cref="JwtHeader"/>.
         /// </summary>
         /// <remarks>If the 'typ' claim is not found, an empty string is returned.</remarks>
-        public override string Typ
+        public string Typ
         {
             get
             {
@@ -518,7 +518,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// Gets the "value" of the 'subject' claim { sub, 'value' }.
         /// </summary>
         /// <remarks>If the 'subject' claim is not found, an empty string is returned.</remarks>
-        public override string Subject
+        public string Subject
         {
             get
             {
@@ -560,7 +560,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// Gets the 'value' of the 'x5t' claim { x5t, 'value' } from the <see cref="JwtHeader"/>.
         /// </summary>
         /// <remarks>If the 'x5t' claim is not found, an empty string is returned.</remarks>
-        public override string X5t
+        public string X5t
         {
             get
             {
@@ -569,11 +569,6 @@ namespace System.IdentityModel.Tokens.Jwt
                 return String.Empty;
             }
         }
-
-        /// <summary>
-        /// This class does not supported compressed JWEs. Please use <see cref="JsonWebToken"/> instead.
-        /// </summary>
-        public override string Zip => throw new NotImplementedException();
 
         /// <summary>
         /// Serializes the <see cref="JwtHeader"/> and <see cref="JwtPayload"/>
@@ -655,7 +650,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// Gets the 'value' corresponding to the provided key { key, 'value' } from the <see cref="JwtPayload"/>.
         /// </summary>
         /// <remarks>If the key has no corresponding value, returns null. </remarks>   
-        public override T GetPayloadValue<T>(string key)
+        public T GetPayloadValue<T>(string key)
         {
             if (string.IsNullOrEmpty(key))
                 throw LogHelper.LogArgumentNullException(nameof(key));
@@ -680,7 +675,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// Tries to get the 'value' corresponding to the provided key { key, 'value' } from the <see cref="JwtPayload"/>. 
         /// </summary>
         /// <remarks>If the key has no corresponding value, returns false. Otherwise returns true. </remarks>   
-        public override bool TryGetPayloadValue<T>(string key, out T value)
+        public bool TryGetPayloadValue<T>(string key, out T value)
         {
             if (string.IsNullOrEmpty(key))
             {
@@ -711,7 +706,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// Gets the 'value' corresponding to the provided key { key, 'value' } from the <see cref="JwtHeader"/>.
         /// </summary>
         /// <remarks>If the key has no corresponding value, returns null. </remarks>   
-        public override T GetHeaderValue<T>(string key)
+        public T GetHeaderValue<T>(string key)
         {
             if (string.IsNullOrEmpty(key))
                 throw LogHelper.LogArgumentNullException(nameof(key));
@@ -736,7 +731,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// Tries to get the value corresponding to the provided key from the <see cref="JwtHeader"/> { key, 'value' }.
         /// </summary>
         /// <remarks>If the key has no corresponding value, returns false. Otherwise returns true. </remarks>   
-        public override bool TryGetHeaderValue<T>(string key, out T value)
+        public bool TryGetHeaderValue<T>(string key, out T value)
         {
             if (string.IsNullOrEmpty(key))
             {

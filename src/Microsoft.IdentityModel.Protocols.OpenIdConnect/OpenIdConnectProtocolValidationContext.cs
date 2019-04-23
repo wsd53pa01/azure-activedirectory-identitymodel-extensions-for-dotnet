@@ -77,6 +77,6 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         /// <summary>
         /// This JWT security token is assumed to have audience, issuer, lifetime and signature validated.
         /// </summary>
-        public JwtToken ValidatedJwtToken { get; set; }
+        public IJsonWebToken ValidatedJsonWebToken { get; set; }
     }
 }
