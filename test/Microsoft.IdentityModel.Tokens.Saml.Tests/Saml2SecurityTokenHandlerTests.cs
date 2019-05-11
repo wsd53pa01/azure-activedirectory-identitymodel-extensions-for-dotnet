@@ -526,6 +526,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
 
                 theoryData.Add(new Saml2TheoryData
                 {
+                    ExpectedException = new ExpectedException(typeof(SecurityTokenInvalidSigningKeyException)),
                     SecurityToken = tokenHandler.CreateToken(tokenDescriptor),
                     TestId = nameof(ValidationDelegates.IssuerSecurityKeyValidatorThrows) + "-false",
                     ValidationParameters = validationParameters

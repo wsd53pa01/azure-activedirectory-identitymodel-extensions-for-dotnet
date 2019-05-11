@@ -188,7 +188,7 @@ namespace Microsoft.IdentityModel.Tokens
             if (validationParameters == null)
                 throw LogHelper.LogArgumentNullException(nameof(validationParameters));
 
-            if (!validationParameters.ValidateIssuerSigningKey)
+            if (!validationParameters.ValidateIssuerSigningKey && validationParameters.IssuerSigningKeyValidator == null)
             {
                 LogHelper.LogInformation(LogMessages.IDX10237);
                 return;
@@ -297,7 +297,7 @@ namespace Microsoft.IdentityModel.Tokens
             if (validationParameters == null)
                 throw LogHelper.LogArgumentNullException(nameof(validationParameters));
 
-            if (!validationParameters.ValidateTokenReplay)
+            if (!validationParameters.ValidateTokenReplay && validationParameters.TokenReplayValidator == null)
             {
                 LogHelper.LogInformation(LogMessages.IDX10246);
                 return;
