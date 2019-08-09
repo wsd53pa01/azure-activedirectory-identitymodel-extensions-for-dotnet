@@ -32,6 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -53,6 +54,45 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// Regex that is used to figure out if a token is in JWE format.
         /// </summary>
         public static Regex RegexJwe = new Regex(JwtConstants.JweCompactSerializationRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(100));
+
+        internal static Dictionary<string, object> CreateDictionaryFromClaims(IEnumerable<Claim> claims)
+        {
+            if (claims == null)
+                throw LogHelper.LogExceptionMessage(new ArgumentNullException(nameof(claims)));
+
+            var payload = new Dictionary<string, object>();
+
+            foreach (Claim claim in claims)
+            {
+                if (claim == null)
+                    continue;
+
+                string jsonClaimType = claim.Type;
+                object jsonClaimValue = claim.ValueType.Equals(ClaimValueTypes.String, StringComparison.Ordinal) ? claim.Value : GetClaimValueUsingValueType(claim);
+                object existingValue;
+
+                // If there is an existing value, append to it.
+                // What to do if the 'ClaimValueType' is not the same.
+                if (payload.TryGetValue(jsonClaimType, out existingValue))
+                {
+                    IList<object> claimValues = existingValue as IList<object>;
+                    if (claimValues == null)
+                    {
+                        claimValues = new List<object>();
+                        claimValues.Add(existingValue);
+                        payload[jsonClaimType] = claimValues;
+                    }
+
+                    claimValues.Add(jsonClaimValue);
+                }
+                else
+                {
+                    payload[jsonClaimType] = jsonClaimValue;
+                }
+            }
+
+            return payload;
+        }
 
         /// <summary>
         /// Produces a signature over the 'input'.
@@ -151,6 +191,49 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             return decryptionKeys;
 
         }
+
+        internal static object GetClaimValueUsingValueType(Claim claim)
+        {
+            if (claim.ValueType == ClaimValueTypes.Boolean)
+            {
+                bool boolValue;
+                if (bool.TryParse(claim.Value, out boolValue))
+                    return boolValue;
+            }
+
+            if (claim.ValueType == ClaimValueTypes.Double)
+            {
+                double doubleValue;
+                if (double.TryParse(claim.Value, out doubleValue))
+                    return doubleValue;
+            }
+
+            if (claim.ValueType == ClaimValueTypes.Integer || claim.ValueType == ClaimValueTypes.Integer32)
+            {
+                int intValue;
+                if (int.TryParse(claim.Value, out intValue))
+                    return intValue;
+            }
+
+            if (claim.ValueType == ClaimValueTypes.Integer64)
+            {
+                long intValue;
+                if (long.TryParse(claim.Value, out intValue))
+                    return intValue;
+            }
+
+            if (claim.ValueType == JsonClaimValueTypes.Json)
+                return JObject.Parse(claim.Value);
+
+            if (claim.ValueType == JsonClaimValueTypes.JsonArray)
+                return JArray.Parse(claim.Value);
+
+            if (claim.ValueType == JsonClaimValueTypes.JsonNull)
+                return string.Empty;
+
+            return claim.Value;
+        }
+
         /// <summary>
         /// Gets the DateTime using the number of seconds from 1970-01-01T0:0:0Z (UTC)
         /// </summary>

@@ -150,11 +150,22 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             if (tokenDescriptor == null)
                 throw LogHelper.LogArgumentNullException(nameof(tokenDescriptor));
 
-            if (tokenDescriptor.Claims == null || !tokenDescriptor.Claims.Any())
-                LogHelper.LogWarning(LogMessages.IDX14114);
-
+            if ((tokenDescriptor.Subject == null || !tokenDescriptor.Subject.Claims.Any()) 
+                && (tokenDescriptor.Claims == null || !tokenDescriptor.Claims.Any()))
+                LogHelper.LogWarning(LogMessages.IDX14114, nameof(SecurityTokenDescriptor), nameof(SecurityTokenDescriptor.Subject), nameof(SecurityTokenDescriptor.Claims));
+            
             // JObject needs to be upcast to an IDictionary<string, JToken> so that we can access the ContainsKey() and Any() methods
-            IDictionary<string, JToken> payload = tokenDescriptor.Claims == null ? new JObject() : JObject.FromObject(tokenDescriptor.Claims);
+            IDictionary<string, JToken> payload;
+            if (tokenDescriptor.Subject != null)
+                payload = JObject.FromObject(JwtTokenUtilities.CreateDictionaryFromClaims(tokenDescriptor.Subject.Claims));
+            else
+                payload = new JObject();
+
+            // If a key is present in both tokenDescriptor.Subject.Claims and tokenDescriptor.Claims, but the key is not the same case in both (e.g. "key" and "KEY"),
+            // the key present in tokenDescriptor.Subject.Claims is the one that will remain after the merge. However, the corresponding value will be overriden with the value
+            // that was present in tokenDescriptor.Claims.
+            if (tokenDescriptor.Claims != null)
+                (payload as JObject).Merge(JObject.FromObject(tokenDescriptor.Claims), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Replace, PropertyNameComparison = StringComparison.OrdinalIgnoreCase });
 
             if (tokenDescriptor.Audience != null)
             {
