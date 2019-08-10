@@ -154,8 +154,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 && (tokenDescriptor.Claims == null || !tokenDescriptor.Claims.Any()))
                 LogHelper.LogWarning(LogMessages.IDX14114, nameof(SecurityTokenDescriptor), nameof(SecurityTokenDescriptor.Subject), nameof(SecurityTokenDescriptor.Claims));
             
-            // JObject needs to be upcast to an IDictionary<string, JToken> so that we can access the ContainsKey() and Any() methods
-            IDictionary<string, JToken> payload;
+            JObject payload;
             if (tokenDescriptor.Subject != null)
                 payload = JObject.FromObject(JwtTokenUtilities.CreateDictionaryFromClaims(tokenDescriptor.Subject.Claims));
             else
@@ -165,7 +164,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             // the key present in tokenDescriptor.Subject.Claims is the one that will remain after the merge. However, the corresponding value will be overriden with the value
             // that was present in tokenDescriptor.Claims.
             if (tokenDescriptor.Claims != null)
-                (payload as JObject).Merge(JObject.FromObject(tokenDescriptor.Claims), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Replace, PropertyNameComparison = StringComparison.OrdinalIgnoreCase });
+                payload.Merge(JObject.FromObject(tokenDescriptor.Claims), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Replace, PropertyNameComparison = StringComparison.OrdinalIgnoreCase });
 
             if (tokenDescriptor.Audience != null)
             {
@@ -207,10 +206,10 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 payload[JwtRegisteredClaimNames.Nbf] = EpochTime.GetIntDate(tokenDescriptor.NotBefore.Value);
             }
 
-            if (!payload.Any())
+            if (!payload.HasValues)
                 throw LogHelper.LogExceptionMessage(new SecurityTokenException(LogMessages.IDX14115));
 
-            return CreateTokenPrivate(payload as JObject, tokenDescriptor.SigningCredentials, tokenDescriptor.EncryptingCredentials, tokenDescriptor.CompressionAlgorithm);
+            return CreateTokenPrivate(payload, tokenDescriptor.SigningCredentials, tokenDescriptor.EncryptingCredentials, tokenDescriptor.CompressionAlgorithm);
         }
 
         /// <summary>
