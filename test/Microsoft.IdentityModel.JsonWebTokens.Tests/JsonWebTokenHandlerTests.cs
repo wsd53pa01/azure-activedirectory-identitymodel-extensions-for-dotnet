@@ -25,10 +25,6 @@
 //
 //------------------------------------------------------------------------------
 
-using Microsoft.IdentityModel.Json;
-using Microsoft.IdentityModel.Json.Linq;
-using Microsoft.IdentityModel.TestUtils;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -37,6 +33,10 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.IdentityModel.Json;
+using Microsoft.IdentityModel.Json.Linq;
+using Microsoft.IdentityModel.TestUtils;
+using Microsoft.IdentityModel.Tokens;
 using Xunit;
 
 #pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
@@ -883,6 +883,78 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
 #endif
                 };
             }
+        }
+
+        [Fact]
+        public void CreateJWSWithDuplicateClaimsRoundTrip()
+        {
+            TestUtilities.WriteHeader($"{this}.CreateJWSWithDuplicateClaimsRoundTrip");
+            var context = new CompareContext();
+
+            var utcNow = DateTime.UtcNow;
+            var jsonWebTokenHandler = new JsonWebTokenHandler();
+
+            // This JObject has two duplicate claims: "aud"/"AUD" and "iat"/"IAT".
+            var payload = new JObject()
+            {
+                { JwtRegisteredClaimNames.Email, "Bob@contoso.com" },
+                { JwtRegisteredClaimNames.GivenName, "Bob" },
+                { JwtRegisteredClaimNames.Iss, Default.Issuer },
+                { JwtRegisteredClaimNames.Aud, Default.Audience },
+                { JwtRegisteredClaimNames.Aud.ToUpper(), "Audience" },
+                { JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(Default.IssueInstant).ToString() },
+                { JwtRegisteredClaimNames.Iat.ToUpper(), EpochTime.GetIntDate(utcNow).ToString() },
+                { JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(Default.NotBefore).ToString()},
+                { JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(Default.Expires).ToString() },
+            };
+
+            // This ClaimsIdentity has two duplicate claims: "aud"/"AUD" and "iat"/"IAT".
+            var payloadClaimsIdentity = new ClaimsIdentity(new List<Claim>()
+            {
+                new Claim(JwtRegisteredClaimNames.Email, "Bob@contoso.com", ClaimValueTypes.String, Default.Issuer, Default.Issuer),
+                new Claim(JwtRegisteredClaimNames.GivenName, "Bob", ClaimValueTypes.String, Default.Issuer, Default.Issuer),
+                new Claim(JwtRegisteredClaimNames.Iss, Default.Issuer, ClaimValueTypes.String, Default.Issuer, Default.Issuer),
+                new Claim(JwtRegisteredClaimNames.Aud, Default.Audience, ClaimValueTypes.String, Default.Issuer, Default.Issuer),
+                new Claim(JwtRegisteredClaimNames.Aud.ToUpper(), "Audience", ClaimValueTypes.String, Default.Issuer, Default.Issuer),
+                new Claim(JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(Default.IssueInstant).ToString(), ClaimValueTypes.String, Default.Issuer, Default.Issuer),
+                new Claim(JwtRegisteredClaimNames.Iat.ToUpper(), EpochTime.GetIntDate(utcNow).ToString(), ClaimValueTypes.String, Default.Issuer, Default.Issuer),
+                new Claim(JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(Default.NotBefore).ToString(), ClaimValueTypes.String, Default.Issuer, Default.Issuer),
+                new Claim(JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(Default.Expires).ToString(), ClaimValueTypes.String, Default.Issuer, Default.Issuer),
+            });
+
+            var securityTokenDescriptor = new SecurityTokenDescriptor()
+            {
+                Claims = payload.ToObject<Dictionary<string, object>>()
+            };
+
+            var jwtStringFromJObject = jsonWebTokenHandler.CreateToken(payload.ToString());
+            var jwtStringFromDictionary = jsonWebTokenHandler.CreateToken(securityTokenDescriptor);
+
+            securityTokenDescriptor = new SecurityTokenDescriptor()
+            {
+                Subject = payloadClaimsIdentity
+            };
+
+            var jwtStringFromSubject = jsonWebTokenHandler.CreateToken(securityTokenDescriptor);
+
+            var jsonWebTokenFromPayload = new JsonWebToken(jwtStringFromJObject);
+            var jsonWebTokenFromDictionary = new JsonWebToken(jwtStringFromDictionary);
+            var jsonWebTokenFromSubject = new JsonWebToken(jwtStringFromSubject);
+
+            // Original payload should not be equal to the payload of any of the created JsonWebTokens as duplicate claims
+            // were used for creation. If duplicate claims are present, only the last claim is kept (regardless of case).
+            if (IdentityComparer.AreEqual(payload, jsonWebTokenFromPayload.Payload))
+                context.AddDiff("Duplicate claims (regardless of case) should be removed when a JsonWebToken is created.");
+            if (IdentityComparer.AreEqual(payload, jsonWebTokenFromDictionary.Payload))
+                context.AddDiff("Duplicate claims (regardless of case) should be removed when a JsonWebToken is created.");
+            if (IdentityComparer.AreEqual(payload, jsonWebTokenFromSubject.Payload))
+                context.AddDiff("Duplicate claims (regardless of case) should be removed when a JsonWebToken is created.");
+
+            // Duplicate values should be removed in the same way regardless of how the JsonWebToken was created.
+            IdentityComparer.AreEqual(jsonWebTokenFromPayload.Payload, jsonWebTokenFromDictionary.Payload, context);
+            IdentityComparer.AreEqual(jsonWebTokenFromPayload.Payload, jsonWebTokenFromSubject.Payload, context);
+
+            TestUtilities.AssertFailIfErrors(context);
         }
 
         // Test checks to make sure that the token payload retrieved from ValidateToken is the same as the payload
