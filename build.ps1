@@ -97,18 +97,6 @@ WriteSectionFooter("End Environment");
 
 $ErrorActionPreference = "Stop"
 
-WriteSectionHeader("VerifyResourceUsage.pl");
-
-Write-Host ">>> Start-Process -Wait -PassThru -NoNewWindow perl $root\src\VerifyResourceUsage.pl"
-$verifyResourceUsageResult = Start-Process -Wait -PassThru -NoNewWindow perl $root\src\VerifyResourceUsage.pl
-
-if($verifyResourceUsageResult.ExitCode -ne 0)
-{
-	throw "VerifyResourceUsage.pl failed."
-}
-
-WriteSectionFooter("End VerifyResourceUsage.pl");
-
 WriteSectionHeader("Build");
 
 $projects = $buildConfiguration.SelectNodes("root/projects/src/project");
@@ -118,12 +106,6 @@ foreach($project in $projects) {
 	RemoveFolder("$root\src\$name\obj");
 }
 
-$testProjects = $buildConfiguration.SelectNodes("root/projects/test/project")
-foreach ($testProject in $testProjects) {
-	$name = $testProject.name;
-	RemoveFolder("$root\test\$name\bin");
-	RemoveFolder("$root\test\$name\obj");
-}
 
 CreateArtifactsRoot($artifactsRoot);
 
@@ -141,12 +123,6 @@ if($p.ExitCode -ne 0)
 }
 popd
 
-if ($generateContractAssemblies.IsPresent)
-{
-	WriteSectionHeader("Generating Contract Assemblies");
-	GenerateContractAssemblies($root);
-	WriteSectionFooter("End Generating Contract Assemblies");
-}
 
 foreach($project in $buildConfiguration.SelectNodes("root/projects/src/project"))
 {
@@ -154,60 +130,6 @@ foreach($project in $buildConfiguration.SelectNodes("root/projects/src/project")
 	Write-Host ">>> Start-Process -Wait -PassThru -NoNewWindow $dotnetexe 'pack' --no-build --no-restore -nodereuse:false -c $buildType -o $artifactsRoot -v m -s $root\src\$name\$name.csproj"
 	Start-Process -wait -PassThru -NoNewWindow $dotnetexe "pack --no-build --no-restore -nodereuse:false -c $buildType -o $artifactsRoot -v m -s $root\src\$name\$name.csproj"
 }
-
-WriteSectionFooter("End Build");
-
-if ($runTests -eq "YES")
-{
-    WriteSectionHeader("Run Tests");
-
-    $testProjects = $buildConfiguration.SelectNodes("root/projects/test/project")
-    foreach ($testProject in $testProjects)
-    {
-        if ($testProject.test -eq "YES")
-        {
-            WriteSectionHeader("Test");
-
-            $name = $testProject.name;
-            Write-Host ">>> Set-Location $root\test\$name"
-            pushd
-            Set-Location $root\test\$name
-            Write-Host ">>> Start-Process -Wait -PassThru -NoNewWindow $dotnetexe 'test $name.csproj' --filter category!=nonwindowstests --no-build --no-restore -nodereuse:false -v q -c $buildType"
-            $p = Start-Process -Wait -PassThru -NoNewWindow $dotnetexe "test $name.csproj --filter category!=nonwindowstests --no-build --no-restore -nodereuse:false -v q -c $buildType"
-
-            if($p.ExitCode -ne 0)
-            {
-                if (!$testExitCode)
-                {
-                    $failedTestProjects = "$name"
-                }
-                else
-                {
-                    $failedTestProjects = "$failedTestProjects, $name"
-                }
-            }
-            $testExitCode = $p.ExitCode + $testExitCode
-
-            popd
-
-            WriteSectionFooter("End Test");
-        }
-    }
-
-    WriteSectionFooter("End Tests");
-
-    if($testExitCode -ne 0)
-    {
-        WriteSectionHeader("==== Test Failures ====");
-        Write-Host "Failed test projects: $failedTestProjects" -foregroundcolor "DarkRed"
-        WriteSectionFooter("==== End Test Failures ====");
-        if($failBuildOnTest -ne "NO")
-        {
-            throw "Exiting test run."
-        }
-    }
-}
-
 
 Write-Host "============================"
 Write-Host ""
