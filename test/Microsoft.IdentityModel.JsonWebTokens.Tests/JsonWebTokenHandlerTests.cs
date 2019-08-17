@@ -806,10 +806,11 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                             { JwtRegisteredClaimNames.Email, "Bob@contoso.com" },
                             { JwtRegisteredClaimNames.GivenName, "Bob" },
                             { JwtRegisteredClaimNames.Iss, Default.Issuer },
-                            { JwtRegisteredClaimNames.Aud, JArray.FromObject(Default.Audiences) },
+                            { JwtRegisteredClaimNames.Aud.ToUpper(), JArray.FromObject(new List<string>() {"Audience1", "Audience2"}) },
                             { JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(Default.IssueInstant).ToString() },
                             { JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(Default.NotBefore).ToString()},
                             { JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(Default.Expires).ToString() },
+                            { JwtRegisteredClaimNames.Aud, JArray.FromObject(Default.Audiences) },
                         }.ToString(Formatting.None),
                         TokenDescriptor =  new SecurityTokenDescriptor
                         {
@@ -819,7 +820,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                                 { JwtRegisteredClaimNames.Email, "Bob@contoso.com" },
                                 { JwtRegisteredClaimNames.GivenName, "Bob" },
                                 { JwtRegisteredClaimNames.Iss, Default.Issuer },
-                                { JwtRegisteredClaimNames.Aud.ToUpper(), JArray.FromObject(Default.Audiences) },
+                                { JwtRegisteredClaimNames.Aud, JArray.FromObject(Default.Audiences) },
                                 { JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(Default.IssueInstant).ToString() },
                                 { JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(Default.NotBefore).ToString()},
                                 { JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(Default.Expires).ToString() },
@@ -829,8 +830,8 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                                 new Claim(JwtRegisteredClaimNames.Email, "Bob@contoso.com", ClaimValueTypes.String, Default.Issuer, Default.Issuer),
                                 new Claim(JwtRegisteredClaimNames.GivenName, "Bob", ClaimValueTypes.String, Default.Issuer, Default.Issuer),
                                 new Claim(JwtRegisteredClaimNames.Iss, "Issuer", ClaimValueTypes.String, Default.Issuer, Default.Issuer),
-                                new Claim(JwtRegisteredClaimNames.Aud, "Audience1", ClaimValueTypes.String, Default.Issuer, Default.Issuer),
-                                new Claim(JwtRegisteredClaimNames.Aud, "Audience2", ClaimValueTypes.String, Default.Issuer, Default.Issuer),
+                                new Claim(JwtRegisteredClaimNames.Aud.ToUpper(), "Audience1", ClaimValueTypes.String, Default.Issuer, Default.Issuer),
+                                new Claim(JwtRegisteredClaimNames.Aud.ToUpper(), "Audience2", ClaimValueTypes.String, Default.Issuer, Default.Issuer),
                                 new Claim(JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(Default.IssueInstant).ToString(), ClaimValueTypes.String, Default.Issuer, Default.Issuer),
                                 new Claim(JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(Default.NotBefore).ToString(), ClaimValueTypes.String, Default.Issuer, Default.Issuer),
                                 new Claim(JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(Default.Expires).ToString(), ClaimValueTypes.String, Default.Issuer, Default.Issuer),
@@ -941,18 +942,9 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             var jsonWebTokenFromDictionary = new JsonWebToken(jwtStringFromDictionary);
             var jsonWebTokenFromSubject = new JsonWebToken(jwtStringFromSubject);
 
-            // Original payload should not be equal to the payload of any of the created JsonWebTokens as duplicate claims
-            // were used for creation. If duplicate claims are present, only the last claim is kept (regardless of case).
-            if (IdentityComparer.AreEqual(payload, jsonWebTokenFromPayload.Payload))
-                context.AddDiff("Duplicate claims (regardless of case) should be removed when a JsonWebToken is created.");
-            if (IdentityComparer.AreEqual(payload, jsonWebTokenFromDictionary.Payload))
-                context.AddDiff("Duplicate claims (regardless of case) should be removed when a JsonWebToken is created.");
-            if (IdentityComparer.AreEqual(payload, jsonWebTokenFromSubject.Payload))
-                context.AddDiff("Duplicate claims (regardless of case) should be removed when a JsonWebToken is created.");
-
-            // Duplicate values should be removed in the same way regardless of how the JsonWebToken was created.
-            IdentityComparer.AreEqual(jsonWebTokenFromPayload.Payload, jsonWebTokenFromDictionary.Payload, context);
-            IdentityComparer.AreEqual(jsonWebTokenFromPayload.Payload, jsonWebTokenFromSubject.Payload, context);
+            IdentityComparer.AreEqual(payload, jsonWebTokenFromPayload.Payload);
+            IdentityComparer.AreEqual(payload, jsonWebTokenFromDictionary.Payload);
+            IdentityComparer.AreEqual(payload, jsonWebTokenFromSubject.Payload);
 
             TestUtilities.AssertFailIfErrors(context);
         }

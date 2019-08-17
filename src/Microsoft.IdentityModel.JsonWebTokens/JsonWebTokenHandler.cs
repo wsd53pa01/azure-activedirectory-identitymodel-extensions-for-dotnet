@@ -164,7 +164,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             // the key present in tokenDescriptor.Subject.Claims is the one that will remain after the merge. However, the corresponding value will be overriden with the value
             // that was present in tokenDescriptor.Claims.
             if (tokenDescriptor.Claims != null)
-                payload.Merge(JObject.FromObject(tokenDescriptor.Claims), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Replace, PropertyNameComparison = StringComparison.OrdinalIgnoreCase });
+                payload.Merge(JObject.FromObject(tokenDescriptor.Claims), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Replace });
 
             if (tokenDescriptor.Audience != null)
             {
