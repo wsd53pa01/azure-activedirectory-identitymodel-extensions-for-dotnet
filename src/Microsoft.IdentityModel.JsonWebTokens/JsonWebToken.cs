@@ -204,6 +204,20 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         public string Cty => Header.Value<string>(JwtHeaderParameterNames.Cty) ?? string.Empty;
 
         /// <summary>
+        /// The claim names used when looking up registered header claims during token validation/creation.
+        /// If an instance of JsonWebToken is created by <see cref="JsonWebTokenHandler"/>, this value will be set to
+        /// <see cref="JsonWebTokenHandler.CustomJwtHeaderParameterNames"/>.
+        /// </summary>
+        public CustomJwtHeaderParameterNames CustomJwtHeaderParameterNames { get; internal set; } = new CustomJwtHeaderParameterNames();
+
+        /// <summary>
+        /// The claim names used when looking up registered payload claims during token validation/creation.
+        /// If an instance of JsonWebToken is created by <see cref="JsonWebTokenHandler"/>, this value will be set to
+        /// <see cref="JsonWebTokenHandler.CustomJwtRegisteredClaimNames"/>.
+        /// </summary>
+        public CustomJwtRegisteredClaimNames CustomJwtRegisteredClaimNames { get; internal set; } = new CustomJwtRegisteredClaimNames();
+
+        /// <summary>
         /// Gets the 'value' of the 'enc' claim { enc, 'value' }.
         /// </summary>
         /// <remarks>If the 'enc' value is not found, an empty string is returned.</remarks>   

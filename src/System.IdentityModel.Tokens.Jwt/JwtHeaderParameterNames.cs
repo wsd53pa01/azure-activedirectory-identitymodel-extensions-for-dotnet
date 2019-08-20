@@ -35,63 +35,63 @@ namespace System.IdentityModel.Tokens.Jwt
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7515#section-4.1.1
         /// </summary>
-        public const string Alg = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.Alg;
+        public static string Alg = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.Alg;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7515#section-4.1.10
         /// also:https://tools.ietf.org/html/rfc7519#section-5.2
         /// </summary>
-        public const string Cty = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.Cty;
+        public static string Cty = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.Cty;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7516#section-4.1.2
         /// </summary>
-        public const string Enc = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.Enc;
+        public static string Enc = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.Enc;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7518#section-4.7.1.1
         /// </summary>
-        public const string IV = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.IV;
+        public static string IV = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.IV;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7515#section-4.1.2
         /// </summary>
-        public const string Jku = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.Jku;
+        public static string Jku = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.Jku;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7515#section-4.1.3
         /// </summary>
-        public const string Jwk = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.Jwk;
+        public static string Jwk = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.Jwk;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7515#section-4.1.4
         /// </summary>
-        public const string Kid = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.Kid;
+        public static string Kid = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.Kid;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7515#section-4.1.9
         /// also:https://tools.ietf.org/html/rfc7519#section-5.1
         /// </summary>
-        public const string Typ = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.Typ;
+        public static string Typ = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.Typ;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7515#section-4.1.6
         /// </summary>
-        public const string X5c = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.X5c;
+        public static string X5c = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.X5c;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7515#page-12
         /// </summary>
-        public const string X5t = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.X5t;
+        public static string X5t = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.X5t;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7515#section-4.1.5
         /// </summary>
-        public const string X5u = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.X5u;
+        public static string X5u = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.X5u;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7516#section-4.1.3
         /// </summary>
-        public const string Zip = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.Zip;
+        public static string Zip = Microsoft.IdentityModel.JsonWebTokens.JwtHeaderParameterNames.Zip;
     }
 }

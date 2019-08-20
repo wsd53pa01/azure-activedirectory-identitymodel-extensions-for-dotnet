@@ -887,7 +887,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             if (token.Length > MaximumTokenSizeInBytes)
                 throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(TokenLogMessages.IDX10209, token.Length, MaximumTokenSizeInBytes)));
 
-            return new JsonWebToken(token);
+            return new JsonWebToken(token) { CustomJwtHeaderParameterNames = CustomJwtHeaderParameterNames, CustomJwtRegisteredClaimNames = CustomJwtRegisteredClaimNames };
         }
 
         /// <summary>
@@ -927,7 +927,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             {
                 if (tokenParts.Length == JwtConstants.JweSegmentCount)
                 {
-                    var jwtToken = new JsonWebToken(token);
+                    var jwtToken = new JsonWebToken(token) { CustomJwtHeaderParameterNames = CustomJwtHeaderParameterNames, CustomJwtRegisteredClaimNames = CustomJwtRegisteredClaimNames };
                     var decryptedJwt = DecryptToken(jwtToken, validationParameters);
                     var innerToken = ValidateSignature(decryptedJwt, validationParameters);
                     jwtToken.InnerToken = innerToken;
@@ -1015,7 +1015,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             }
             else
             {
-                jwtToken = new JsonWebToken(token);
+                jwtToken = new JsonWebToken(token) { CustomJwtHeaderParameterNames = CustomJwtHeaderParameterNames, CustomJwtRegisteredClaimNames = CustomJwtRegisteredClaimNames }; ;
             }
 
             var encodedBytes = Encoding.UTF8.GetBytes(jwtToken.EncodedHeader + "." + jwtToken.EncodedPayload);
