@@ -1,4 +1,4 @@
-//------------------------------------------------------------------------------
+﻿//------------------------------------------------------------------------------
 //
 // Copyright (c) Microsoft Corporation.
 // All rights reserved.
@@ -28,140 +28,140 @@
 namespace Microsoft.IdentityModel.JsonWebTokens
 {
     /// <summary>
-    /// List of registered claims from different sources
-    /// http://tools.ietf.org/html/rfc7519#section-4
-    /// http://openid.net/specs/openid-connect-core-1_0.html#IDToken
+    /// The claim names used when looking up registered payload claims during token validation/creation.
+    /// <see cref="JwtRegisteredClaimNames"/> are used by default, but each instance of the <see cref="JsonWebTokenHandler"/>
+    /// has its own instance of this class, which allows claim names to be overridden if necessary.
     /// </summary>
-    public struct JwtRegisteredClaimNames
+    public class CustomJwtRegisteredClaimNames
     {
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
         /// </summary>
-        public static string Actort = "actort";
+        public string Actort = JwtRegisteredClaimNames.Actort;
 
         /// <summary>
         /// http://openid.net/specs/openid-connect-core-1_0.html#IDToken
         /// </summary>
-        public static string Acr = "acr";
+        public string Acr = JwtRegisteredClaimNames.Acr;
 
         /// <summary>
         /// http://openid.net/specs/openid-connect-core-1_0.html#IDToken
         /// </summary>
-        public static string Amr = "amr";
+        public string Amr = JwtRegisteredClaimNames.Amr;
 
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
         /// </summary>
-        public static string Aud = "aud";
+        public string Aud = JwtRegisteredClaimNames.Aud;
 
         /// <summary>
         /// http://openid.net/specs/openid-connect-core-1_0.html#IDToken
         /// </summary>
-        public static string AuthTime = "auth_time";
+        public string AuthTime = JwtRegisteredClaimNames.AuthTime;
 
         /// <summary>
         /// http://openid.net/specs/openid-connect-core-1_0.html#IDToken
         /// </summary>
-        public static string Azp = "azp";
+        public string Azp = JwtRegisteredClaimNames.Azp;
 
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
         /// </summary>
-        public static string Birthdate = "birthdate";
+        public string Birthdate = JwtRegisteredClaimNames.Birthdate;
 
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
         /// </summary>
-        public static string CHash = "c_hash";
+        public string CHash = JwtRegisteredClaimNames.CHash;
 
         /// <summary>
         /// http://openid.net/specs/openid-connect-core-1_0.html#CodeIDToken
         /// </summary>
-        public static string AtHash = "at_hash";
+        public string AtHash = JwtRegisteredClaimNames.AtHash;
 
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
         /// </summary>
-        public static string Email = "email";
+        public string Email = JwtRegisteredClaimNames.Email;
 
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
         /// </summary>
-        public static string Exp = "exp";
+        public string Exp = JwtRegisteredClaimNames.Azp;
 
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
         /// </summary>
-        public static string Gender = "gender";
+        public string Gender = JwtRegisteredClaimNames.Gender;
 
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
         /// </summary>
-        public static string FamilyName = "family_name";
+        public string FamilyName = JwtRegisteredClaimNames.FamilyName;
 
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
         /// </summary>
-        public static string GivenName = "given_name";
+        public string GivenName = JwtRegisteredClaimNames.GivenName;
 
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
         /// </summary>
-        public static string Iat = "iat";
+        public string Iat = JwtRegisteredClaimNames.Iat;
 
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
         /// </summary>
-        public static string Iss = "iss";
+        public string Iss = JwtRegisteredClaimNames.Iss;
 
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
         /// </summary>
-        public static string Jti = "jti";
+        public string Jti = JwtRegisteredClaimNames.Jti;
 
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
         /// </summary>
-        public static string NameId = "nameid";
+        public string NameId = JwtRegisteredClaimNames.NameId;
 
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
         /// </summary>
-        public static string Nonce = "nonce";
+        public string Nonce = JwtRegisteredClaimNames.Nonce;
 
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
         /// </summary>
-        public static string Nbf = "nbf";
+        public string Nbf = JwtRegisteredClaimNames.Nbf;
 
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
         /// </summary>
-        public static string Prn = "prn";
+        public string Prn = JwtRegisteredClaimNames.Prn;
 
         /// <summary>
         /// http://openid.net/specs/openid-connect-frontchannel-1_0.html#OPLogout
         /// </summary>
-        public static string Sid = "sid";
+        public string Sid = JwtRegisteredClaimNames.Sid;
 
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
         /// </summary>
-        public static string Sub = "sub";
+        public string Sub = JwtRegisteredClaimNames.Sub;
 
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
         /// </summary>
-        public static string Typ = "typ";
+        public string Typ = JwtRegisteredClaimNames.Typ;
 
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
         /// </summary>
-        public static string UniqueName = "unique_name";
+        public string UniqueName = JwtRegisteredClaimNames.UniqueName;
 
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
         /// </summary>
-        public static string Website = "website";
+        public string Website = JwtRegisteredClaimNames.Website;
     }
 }

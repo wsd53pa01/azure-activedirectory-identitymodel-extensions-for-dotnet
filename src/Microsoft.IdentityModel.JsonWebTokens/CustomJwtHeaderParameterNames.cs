@@ -1,4 +1,4 @@
-//------------------------------------------------------------------------------
+﻿//------------------------------------------------------------------------------
 //
 // Copyright (c) Microsoft Corporation.
 // All rights reserved.
@@ -28,70 +28,72 @@
 namespace Microsoft.IdentityModel.JsonWebTokens
 {
     /// <summary>
-    /// List of header parameter names see: http://tools.ietf.org/html/rfc7519#section-5.
+    /// The claim names used when looking up registered header claims during token validation/creation.
+    /// <see cref="JwtHeaderParameterNames"/> are used by default, but each instance of the <see cref="JsonWebTokenHandler"/>
+    /// has its own instance of this class, which allows claim names to be overridden if necessary.
     /// </summary>
-    public struct JwtHeaderParameterNames
+    public class CustomJwtHeaderParameterNames
     {
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7515#section-4.1.1
         /// </summary>
-        public static string Alg = "alg";
+        public string Alg = JwtHeaderParameterNames.Alg;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7515#section-4.1.10
         /// also:https://tools.ietf.org/html/rfc7519#section-5.2
         /// </summary>
-        public static string Cty = "cty";
+        public string Cty = JwtHeaderParameterNames.Cty;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7516#section-4.1.2
         /// </summary>
-        public static string Enc = "enc";
+        public string Enc = JwtHeaderParameterNames.Enc;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7518#section-4.7.1.1
         /// </summary>
-        public static string IV = "iv";
+        public string IV = JwtHeaderParameterNames.IV;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7515#section-4.1.2
         /// </summary>
-        public static string Jku = "jku";
+        public string Jku = JwtHeaderParameterNames.Jku;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7515#section-4.1.3
         /// </summary>
-        public static string Jwk = "jwk";
+        public string Jwk = JwtHeaderParameterNames.Jwk;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7515#section-4.1.4
         /// </summary>
-        public static string Kid = "kid";
+        public string Kid = JwtHeaderParameterNames.Kid;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7515#section-4.1.9
         /// also:https://tools.ietf.org/html/rfc7519#section-5.1
         /// </summary>
-        public static string Typ = "typ";
+        public string Typ = JwtHeaderParameterNames.Typ;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7515#section-4.1.6
         /// </summary>
-        public static string X5c = "x5c";
+        public string X5c = JwtHeaderParameterNames.X5c;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7515#page-12
         /// </summary>
-        public static string X5t = "x5t";
+        public string X5t = JwtHeaderParameterNames.X5t;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7515#section-4.1.5
         /// </summary>
-        public static string X5u = "x5u";
+        public string X5u = JwtHeaderParameterNames.X5u;
 
         /// <summary>
         /// see:https://tools.ietf.org/html/rfc7516#section-4.1.3
         /// </summary>
-        public static string Zip = "zip";
+        public string Zip = JwtHeaderParameterNames.Zip;
     }
 }

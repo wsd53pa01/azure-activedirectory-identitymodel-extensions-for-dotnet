@@ -62,6 +62,16 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         }
 
         /// <summary>
+        /// The claim names used when looking up registered header claims during token validation/creation.
+        /// </summary>
+        public CustomJwtHeaderParameterNames CustomJwtHeaderParameterNames { get; } = new CustomJwtHeaderParameterNames();
+
+        /// <summary>
+        /// The claim names used when looking up registered payload claims during token validation/creation.
+        /// </summary>
+        public CustomJwtRegisteredClaimNames CustomJwtRegisteredClaimNames { get; } = new CustomJwtRegisteredClaimNames();
+
+        /// <summary>
         /// Determines if the string is a well formed Json Web Token (JWT).
         /// <para>see: http://tools.ietf.org/html/rfc7519 </para>
         /// </summary>
