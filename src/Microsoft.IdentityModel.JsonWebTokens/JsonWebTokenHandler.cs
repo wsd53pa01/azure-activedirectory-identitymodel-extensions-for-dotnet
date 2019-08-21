@@ -168,42 +168,42 @@ namespace Microsoft.IdentityModel.JsonWebTokens
 
             if (tokenDescriptor.Audience != null)
             {
-                if (payload.ContainsKey(JwtRegisteredClaimNames.Aud))
+                if (payload.ContainsKey(CustomJwtRegisteredClaimNames.Aud))
                     LogHelper.LogInformation(LogHelper.FormatInvariant(LogMessages.IDX14113, nameof(tokenDescriptor.Audience)));
 
-                payload[JwtRegisteredClaimNames.Aud] = tokenDescriptor.Audience;
+                payload[CustomJwtRegisteredClaimNames.Aud] = tokenDescriptor.Audience;
             }
 
             if (tokenDescriptor.Expires.HasValue)
             {
-                if (payload.ContainsKey(JwtRegisteredClaimNames.Exp))
+                if (payload.ContainsKey(CustomJwtRegisteredClaimNames.Exp))
                     LogHelper.LogInformation(LogHelper.FormatInvariant(LogMessages.IDX14113, nameof(tokenDescriptor.Expires)));
 
-                payload[JwtRegisteredClaimNames.Exp] = EpochTime.GetIntDate(tokenDescriptor.Expires.Value);
+                payload[CustomJwtRegisteredClaimNames.Exp] = EpochTime.GetIntDate(tokenDescriptor.Expires.Value);
             }
 
             if (tokenDescriptor.Issuer != null)
             {
-                if (payload.ContainsKey(JwtRegisteredClaimNames.Iss))
+                if (payload.ContainsKey(CustomJwtRegisteredClaimNames.Iss))
                     LogHelper.LogInformation(LogHelper.FormatInvariant(LogMessages.IDX14113, nameof(tokenDescriptor.Issuer)));
 
-                payload[JwtRegisteredClaimNames.Iss] = tokenDescriptor.Issuer;
+                payload[CustomJwtRegisteredClaimNames.Iss] = tokenDescriptor.Issuer;
             }
 
             if (tokenDescriptor.IssuedAt.HasValue)
             {
-                if (payload.ContainsKey(JwtRegisteredClaimNames.Iat))
+                if (payload.ContainsKey(CustomJwtRegisteredClaimNames.Iat))
                     LogHelper.LogInformation(LogHelper.FormatInvariant(LogMessages.IDX14113, nameof(tokenDescriptor.IssuedAt)));
 
-                payload[JwtRegisteredClaimNames.Iat] = EpochTime.GetIntDate(tokenDescriptor.IssuedAt.Value);
+                payload[CustomJwtRegisteredClaimNames.Iat] = EpochTime.GetIntDate(tokenDescriptor.IssuedAt.Value);
             }
 
             if (tokenDescriptor.NotBefore.HasValue)
             {
-                if (payload.ContainsKey(JwtRegisteredClaimNames.Nbf))
+                if (payload.ContainsKey(CustomJwtRegisteredClaimNames.Nbf))
                     LogHelper.LogInformation(LogHelper.FormatInvariant(LogMessages.IDX14113, nameof(tokenDescriptor.NotBefore)));
 
-                payload[JwtRegisteredClaimNames.Nbf] = EpochTime.GetIntDate(tokenDescriptor.NotBefore.Value);
+                payload[CustomJwtRegisteredClaimNames.Nbf] = EpochTime.GetIntDate(tokenDescriptor.NotBefore.Value);
             }
 
             if (!payload.Any())
@@ -303,13 +303,13 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             {
                 var header = new JObject
                 {
-                    { JwtHeaderParameterNames.Alg, signingCredentials.Algorithm },
-                    { JwtHeaderParameterNames.Kid, signingCredentials.Key.KeyId },
-                    { JwtHeaderParameterNames.Typ, JwtConstants.HeaderType }
+                    { CustomJwtHeaderParameterNames.Alg, signingCredentials.Algorithm },
+                    { CustomJwtHeaderParameterNames.Kid, signingCredentials.Key.KeyId },
+                    { CustomJwtHeaderParameterNames.Typ, JwtConstants.HeaderType }
                 };
 
                 if (signingCredentials.Key is X509SecurityKey x509SecurityKey)
-                    header[JwtHeaderParameterNames.X5t] = x509SecurityKey.X5t;
+                    header[CustomJwtHeaderParameterNames.X5t] = x509SecurityKey.X5t;
 
                 rawHeader = Base64UrlEncoder.Encode(Encoding.UTF8.GetBytes(header.ToString(Formatting.None)));
                 JsonWebTokenManager.KeyToHeaderCache.TryAdd(JsonWebTokenManager.GetHeaderCacheKey(signingCredentials), rawHeader);
@@ -318,14 +318,14 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             if (SetDefaultTimesOnTokenCreation)
             {
                 var now = EpochTime.GetIntDate(DateTime.UtcNow);
-                if (!payload.TryGetValue(JwtRegisteredClaimNames.Exp, out _))
-                    payload.Add(JwtRegisteredClaimNames.Exp, now + TimeSpan.FromMinutes(TokenLifetimeInMinutes).TotalSeconds);
+                if (!payload.TryGetValue(CustomJwtRegisteredClaimNames.Exp, out _))
+                    payload.Add(CustomJwtRegisteredClaimNames.Exp, now + TimeSpan.FromMinutes(TokenLifetimeInMinutes).TotalSeconds);
 
-                if (!payload.TryGetValue(JwtRegisteredClaimNames.Iat, out _))
-                    payload.Add(JwtRegisteredClaimNames.Iat, now);
+                if (!payload.TryGetValue(CustomJwtRegisteredClaimNames.Iat, out _))
+                    payload.Add(CustomJwtRegisteredClaimNames.Iat, now);
 
-                if (!payload.TryGetValue(JwtRegisteredClaimNames.Nbf, out _))
-                    payload.Add(JwtRegisteredClaimNames.Nbf, now);
+                if (!payload.TryGetValue(CustomJwtRegisteredClaimNames.Nbf, out _))
+                    payload.Add(CustomJwtRegisteredClaimNames.Nbf, now);
             }
 
             var rawPayload = Base64UrlEncoder.Encode(Encoding.UTF8.GetBytes(payload.ToString(Formatting.None)));
@@ -396,7 +396,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 if (claimType == ClaimTypes.Actor)
                 {
                     if (identity.Actor != null)
-                        throw LogHelper.LogExceptionMessage(new InvalidOperationException(LogHelper.FormatInvariant(LogMessages.IDX14112, JwtRegisteredClaimNames.Actort, jwtClaim.Value)));
+                        throw LogHelper.LogExceptionMessage(new InvalidOperationException(LogHelper.FormatInvariant(LogMessages.IDX14112, ClaimTypes.Actor, jwtClaim.Value)));
 
                     if (CanReadToken(jwtClaim.Value))
                     {
@@ -584,18 +584,18 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 var header = new JObject();
 
                 if (!string.IsNullOrEmpty(encryptingCredentials.Alg))
-                    header.Add(JwtHeaderParameterNames.Alg, encryptingCredentials.Alg);
+                    header.Add(CustomJwtHeaderParameterNames.Alg, encryptingCredentials.Alg);
 
                 if (!string.IsNullOrEmpty(encryptingCredentials.Enc))
-                    header.Add(JwtHeaderParameterNames.Enc, encryptingCredentials.Enc);
+                    header.Add(CustomJwtHeaderParameterNames.Enc, encryptingCredentials.Enc);
 
                 if (!string.IsNullOrEmpty(encryptingCredentials.Key.KeyId))
-                    header.Add(JwtHeaderParameterNames.Kid, encryptingCredentials.Key.KeyId);
+                    header.Add(CustomJwtHeaderParameterNames.Kid, encryptingCredentials.Key.KeyId);
 
                 if (!string.IsNullOrEmpty(compressionAlgorithm))
-                    header.Add(JwtHeaderParameterNames.Zip, compressionAlgorithm);
+                    header.Add(CustomJwtHeaderParameterNames.Zip, compressionAlgorithm);
 
-                header.Add(JwtHeaderParameterNames.Typ, JwtConstants.HeaderType);
+                header.Add(CustomJwtHeaderParameterNames.Typ, JwtConstants.HeaderType);
 
                 var encryptionProvider = cryptoProviderFactory.CreateAuthenticatedEncryptionProvider(encryptingCredentials.Key, encryptingCredentials.Enc);
                 if (encryptionProvider == null)
@@ -656,18 +656,18 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 var header = new JObject();
 
                 if (!string.IsNullOrEmpty(encryptingCredentials.Alg))
-                    header.Add(JwtHeaderParameterNames.Alg, encryptingCredentials.Alg);
+                    header.Add(CustomJwtHeaderParameterNames.Alg, encryptingCredentials.Alg);
 
                 if (!string.IsNullOrEmpty(encryptingCredentials.Enc))
-                    header.Add(JwtHeaderParameterNames.Enc, encryptingCredentials.Enc);
+                    header.Add(CustomJwtHeaderParameterNames.Enc, encryptingCredentials.Enc);
 
                 if (!string.IsNullOrEmpty(encryptingCredentials.Key.KeyId))
-                    header.Add(JwtHeaderParameterNames.Kid, encryptingCredentials.Key.KeyId);
+                    header.Add(CustomJwtHeaderParameterNames.Kid, encryptingCredentials.Key.KeyId);
 
                 if (!string.IsNullOrEmpty(compressionAlgorithm))
-                    header.Add(JwtHeaderParameterNames.Zip, compressionAlgorithm);
+                    header.Add(CustomJwtHeaderParameterNames.Zip, compressionAlgorithm);
 
-                header.Add(JwtHeaderParameterNames.Typ, JwtConstants.HeaderType);
+                header.Add(CustomJwtHeaderParameterNames.Typ, JwtConstants.HeaderType);
 
                 byte[] plainText;
                 if (!string.IsNullOrEmpty(compressionAlgorithm))

@@ -112,13 +112,13 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// Gets the 'value' of the 'actort' claim { actort, 'value' }.
         /// </summary>
         /// <remarks>If the 'actort' claim is not found, an empty string is returned.</remarks> 
-        public string Actor => Payload.Value<string>(JwtRegisteredClaimNames.Actort) ?? string.Empty;
+        public string Actor => Payload.Value<string>(CustomJwtRegisteredClaimNames.Actort) ?? string.Empty;
 
         /// <summary>
         /// Gets the 'value' of the 'alg' claim { alg, 'value' }.
         /// </summary>
         /// <remarks>If the 'alg' claim is not found, an empty string is returned.</remarks>   
-        public string Alg => Header.Value<string>(JwtHeaderParameterNames.Alg) ?? string.Empty;
+        public string Alg => Header.Value<string>(CustomJwtHeaderParameterNames.Alg) ?? string.Empty;
 
         /// <summary>
         /// Gets the list of 'aud' claim { aud, 'value' }.
@@ -128,7 +128,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         {
             get
             {
-                if (Payload.GetValue(JwtRegisteredClaimNames.Aud, StringComparison.Ordinal) is JToken value)
+                if (Payload.GetValue(CustomJwtRegisteredClaimNames.Aud, StringComparison.Ordinal) is JToken value)
                 {
                     if (value.Type is JTokenType.String)
                         return new List<string> { value.ToObject<string>() };
@@ -201,27 +201,27 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// Gets the 'value' of the 'cty' claim { cty, 'value' }.
         /// </summary>
         /// <remarks>If the 'cty' claim is not found, an empty string is returned.</remarks>   
-        public string Cty => Header.Value<string>(JwtHeaderParameterNames.Cty) ?? string.Empty;
+        public string Cty => Header.Value<string>(CustomJwtHeaderParameterNames.Cty) ?? string.Empty;
 
         /// <summary>
         /// The claim names used when looking up registered header claims during token validation/creation.
         /// If an instance of JsonWebToken is created by <see cref="JsonWebTokenHandler"/>, this value will be set to
         /// <see cref="JsonWebTokenHandler.CustomJwtHeaderParameterNames"/>.
         /// </summary>
-        public CustomJwtHeaderParameterNames CustomJwtHeaderParameterNames { get; internal set; } = new CustomJwtHeaderParameterNames();
+        internal CustomJwtHeaderParameterNames CustomJwtHeaderParameterNames { get; set; } = new CustomJwtHeaderParameterNames();
 
         /// <summary>
         /// The claim names used when looking up registered payload claims during token validation/creation.
         /// If an instance of JsonWebToken is created by <see cref="JsonWebTokenHandler"/>, this value will be set to
         /// <see cref="JsonWebTokenHandler.CustomJwtRegisteredClaimNames"/>.
         /// </summary>
-        public CustomJwtRegisteredClaimNames CustomJwtRegisteredClaimNames { get; internal set; } = new CustomJwtRegisteredClaimNames();
+        internal CustomJwtRegisteredClaimNames CustomJwtRegisteredClaimNames { get; set; } = new CustomJwtRegisteredClaimNames();
 
         /// <summary>
         /// Gets the 'value' of the 'enc' claim { enc, 'value' }.
         /// </summary>
         /// <remarks>If the 'enc' value is not found, an empty string is returned.</remarks>   
-        public string Enc => Header.Value<string>(JwtHeaderParameterNames.Enc) ?? string.Empty;
+        public string Enc => Header.Value<string>(CustomJwtHeaderParameterNames.Enc) ?? string.Empty;
 
         /// <summary>
         /// Gets the EncryptedKey from the original raw data of this instance when it was created.
@@ -238,7 +238,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// Gets the 'value' of the 'jti' claim { jti, ''value' }.
         /// </summary>
         /// <remarks>If the 'jti' claim is not found, an empty string is returned.</remarks>
-        public override string Id => Payload.Value<string>(JwtRegisteredClaimNames.Jti) ?? string.Empty;
+        public override string Id => Payload.Value<string>(CustomJwtRegisteredClaimNames.Jti) ?? string.Empty;
 
         /// <summary>
         /// Gets the InitializationVector from the original raw data of this instance when it was created.
@@ -255,19 +255,19 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// Gets the 'value' of the 'iat' claim { iat, 'value' } converted to a <see cref="DateTime"/> assuming 'value' is seconds since UnixEpoch (UTC 1970-01-01T0:0:0Z).
         /// </summary>
         /// <remarks>If the 'iat' claim is not found, then <see cref="DateTime.MinValue"/> is returned.</remarks>
-        public DateTime IssuedAt => JwtTokenUtilities.GetDateTime(JwtRegisteredClaimNames.Iat, Payload);
+        public DateTime IssuedAt => JwtTokenUtilities.GetDateTime(CustomJwtRegisteredClaimNames.Iat, Payload);
 
         /// <summary>
         /// Gets the 'value' of the 'iss' claim { iss, 'value' }.
         /// </summary>
         /// <remarks>If the 'iss' claim is not found, an empty string is returned.</remarks>   
-        public override string Issuer => Payload.Value<string>(JwtRegisteredClaimNames.Iss) ?? string.Empty;
+        public override string Issuer => Payload.Value<string>(CustomJwtRegisteredClaimNames.Iss) ?? string.Empty;
 
         /// <summary>
         /// Gets the 'value' of the 'kid' claim { kid, 'value' }.
         /// </summary>
         /// <remarks>If the 'kid' claim is not found, an empty string is returned.</remarks>   
-        public string Kid => Header.Value<string>(JwtHeaderParameterNames.Kid) ?? string.Empty;
+        public string Kid => Header.Value<string>(CustomJwtHeaderParameterNames.Kid) ?? string.Empty;
 
         /// <summary>
         /// Represents the JSON payload.
@@ -315,37 +315,37 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// Gets the 'value' of the 'sub' claim { sub, 'value' }.
         /// </summary>
         /// <remarks>If the 'sub' claim is not found, an empty string is returned.</remarks>   
-        public string Subject => Payload.Value<string>(JwtRegisteredClaimNames.Sub) ?? string.Empty;
+        public string Subject => Payload.Value<string>(CustomJwtRegisteredClaimNames.Sub) ?? string.Empty;
 
         /// <summary>
         /// Gets the 'value' of the 'typ' claim { typ, 'value' }.
         /// </summary>
         /// <remarks>If the 'typ' claim is not found, an empty string is returned.</remarks>   
-        public string Typ => Header.Value<string>(JwtHeaderParameterNames.Typ) ?? string.Empty;
+        public string Typ => Header.Value<string>(CustomJwtHeaderParameterNames.Typ) ?? string.Empty;
 
         /// <summary>
         /// Gets the 'value' of the 'nbf' claim { nbf, 'value' } converted to a <see cref="DateTime"/> assuming 'value' is seconds since UnixEpoch (UTC 1970-01-01T0:0:0Z).
         /// </summary>
         /// <remarks>If the 'nbf' claim is not found, then <see cref="DateTime.MinValue"/> is returned.</remarks>
-        public override DateTime ValidFrom => JwtTokenUtilities.GetDateTime(JwtRegisteredClaimNames.Nbf, Payload);
+        public override DateTime ValidFrom => JwtTokenUtilities.GetDateTime(CustomJwtRegisteredClaimNames.Nbf, Payload);
 
         /// <summary>
         /// Gets the 'value' of the 'exp' claim { exp, 'value' } converted to a <see cref="DateTime"/> assuming 'value' is seconds since UnixEpoch (UTC 1970-01-01T0:0:0Z).
         /// </summary>
         /// <remarks>If the 'exp' claim is not found, then <see cref="DateTime.MinValue"/> is returned.</remarks>
-        public override DateTime ValidTo => JwtTokenUtilities.GetDateTime(JwtRegisteredClaimNames.Exp, Payload);
+        public override DateTime ValidTo => JwtTokenUtilities.GetDateTime(CustomJwtRegisteredClaimNames.Exp, Payload);
 
         /// <summary>
         /// Gets the 'value' of the 'x5t' claim { x5t, 'value' }.
         /// </summary>
         /// <remarks>If the 'x5t' claim is not found, an empty string is returned.</remarks>   
-        public string X5t => Header.Value<string>(JwtHeaderParameterNames.X5t) ?? string.Empty;
+        public string X5t => Header.Value<string>(CustomJwtHeaderParameterNames.X5t) ?? string.Empty;
 
         /// <summary>
         /// Gets the 'value' of the 'zip' claim { zip, 'value' }.
         /// </summary>
         /// <remarks>If the 'zip' claim is not found, an empty string is returned.</remarks>   
-        public string Zip => Header.Value<string>(JwtHeaderParameterNames.Zip) ?? String.Empty;
+        public string Zip => Header.Value<string>(CustomJwtHeaderParameterNames.Zip) ?? String.Empty;
 
         /// <summary>
         /// Decodes the string into the header, payload and signature.
@@ -450,7 +450,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         {
             // Log if CTY is set, assume compact JWS
             if (Cty != string.Empty)
-                LogHelper.LogVerbose(LogHelper.FormatInvariant(LogMessages.IDX14105, Payload.Value<string>(JwtHeaderParameterNames.Cty)));
+                LogHelper.LogVerbose(LogHelper.FormatInvariant(LogMessages.IDX14105, Payload.Value<string>(CustomJwtHeaderParameterNames.Cty)));
 
             try
             {

@@ -587,6 +587,13 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
         {
             get
             {
+                var jsonWebTokenHandlerWithUppercasePayloadClaimLookup = new JsonWebTokenHandler();
+                jsonWebTokenHandlerWithUppercasePayloadClaimLookup.CustomJwtRegisteredClaimNames.Iss = JwtRegisteredClaimNames.Iss.ToUpper();
+                jsonWebTokenHandlerWithUppercasePayloadClaimLookup.CustomJwtRegisteredClaimNames.Aud = JwtRegisteredClaimNames.Aud.ToUpper();
+                jsonWebTokenHandlerWithUppercasePayloadClaimLookup.CustomJwtRegisteredClaimNames.Iat = JwtRegisteredClaimNames.Iat.ToUpper();
+                jsonWebTokenHandlerWithUppercasePayloadClaimLookup.CustomJwtRegisteredClaimNames.Nbf = JwtRegisteredClaimNames.Nbf.ToUpper();
+                jsonWebTokenHandlerWithUppercasePayloadClaimLookup.CustomJwtRegisteredClaimNames.Exp = JwtRegisteredClaimNames.Exp.ToUpper();
+
                 return new TheoryData<CreateTokenTheoryData>
                 {
                     new CreateTokenTheoryData
@@ -600,6 +607,41 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                             Claims = Default.PayloadDictionary
                         },
                         JsonWebTokenHandler = new JsonWebTokenHandler(),
+                        ValidationParameters = new TokenValidationParameters
+                        {
+                            IssuerSigningKey = KeyingMaterial.JsonWebKeyRsa256SigningCredentials.Key,
+                            ValidAudience = Default.Audience,
+                            ValidIssuer = Default.Issuer
+                        }
+                    },
+                    new CreateTokenTheoryData
+                    {
+                        TestId = "ValidWithUpperCaseClaims",
+                        Payload = new JObject()
+                        {
+                            { JwtRegisteredClaimNames.Email, "Bob@contoso.com" },
+                            { JwtRegisteredClaimNames.GivenName, "Bob" },
+                            { JwtRegisteredClaimNames.Iss.ToUpper(), Default.Issuer },
+                            { JwtRegisteredClaimNames.Aud.ToUpper(), Default.Audience },
+                            { JwtRegisteredClaimNames.Iat.ToUpper(), EpochTime.GetIntDate(Default.IssueInstant).ToString() },
+                            { JwtRegisteredClaimNames.Nbf.ToUpper(), EpochTime.GetIntDate(Default.NotBefore).ToString()},
+                            { JwtRegisteredClaimNames.Exp.ToUpper(), EpochTime.GetIntDate(Default.Expires).ToString() },
+                        }.ToString(),
+                        TokenDescriptor =  new SecurityTokenDescriptor
+                        {
+                            SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
+                            Claims =  new Dictionary<string, object>()
+                            {
+                                { JwtRegisteredClaimNames.Email, "Bob@contoso.com" },
+                                { JwtRegisteredClaimNames.GivenName, "Bob" },
+                                { JwtRegisteredClaimNames.Iss.ToUpper(), Default.Issuer },
+                                { JwtRegisteredClaimNames.Aud.ToUpper(), Default.Audience },
+                                { JwtRegisteredClaimNames.Iat.ToUpper(), EpochTime.GetIntDate(Default.IssueInstant).ToString() },
+                                { JwtRegisteredClaimNames.Nbf.ToUpper(), EpochTime.GetIntDate(Default.NotBefore).ToString()},
+                                { JwtRegisteredClaimNames.Exp.ToUpper(), EpochTime.GetIntDate(Default.Expires).ToString() }
+                            },
+                        },
+                        JsonWebTokenHandler = jsonWebTokenHandlerWithUppercasePayloadClaimLookup,
                         ValidationParameters = new TokenValidationParameters
                         {
                             IssuerSigningKey = KeyingMaterial.JsonWebKeyRsa256SigningCredentials.Key,

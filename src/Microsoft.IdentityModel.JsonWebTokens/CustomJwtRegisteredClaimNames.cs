@@ -87,7 +87,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
         /// </summary>
-        public string Exp = JwtRegisteredClaimNames.Azp;
+        public string Exp = JwtRegisteredClaimNames.Exp;
 
         /// <summary>
         /// http://tools.ietf.org/html/rfc7519#section-4
