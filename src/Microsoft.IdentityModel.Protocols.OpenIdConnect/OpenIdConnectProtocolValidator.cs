@@ -288,7 +288,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
             // both 'id_token' and 'access_token' are required
             if (string.IsNullOrEmpty(validationContext.ProtocolMessage.IdToken) || string.IsNullOrEmpty(validationContext.ProtocolMessage.AccessToken))
                 throw LogHelper.LogExceptionMessage(new OpenIdConnectProtocolException(LogMessages.IDX21336));
-            
+
             if (validationContext.ValidatedIdToken == null)
                 throw LogHelper.LogExceptionMessage(new OpenIdConnectProtocolException(LogMessages.IDX21332));
 
@@ -343,14 +343,13 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
             if (string.IsNullOrEmpty(sub))
                 throw LogHelper.LogExceptionMessage(new OpenIdConnectProtocolException(LogMessages.IDX21345));
 
-            if (validationContext.ValidatedIdToken != null)
-            {
-                if (string.IsNullOrEmpty(validationContext.ValidatedIdToken.Subject))
-                    throw LogHelper.LogExceptionMessage(new OpenIdConnectProtocolException(LogMessages.IDX21346));
 
-                if (!string.Equals(validationContext.ValidatedIdToken.Subject, sub, StringComparison.Ordinal))
-                    throw LogHelper.LogExceptionMessage(new OpenIdConnectProtocolException(LogHelper.FormatInvariant(LogMessages.IDX21338, validationContext.ValidatedIdToken.Subject, sub)));
-            }
+           if (string.IsNullOrEmpty(validationContext.ValidatedIdToken.Subject))
+                throw LogHelper.LogExceptionMessage(new OpenIdConnectProtocolException(LogMessages.IDX21346));
+
+           if (!string.Equals(validationContext.ValidatedIdToken.Subject, sub, StringComparison.Ordinal))
+               throw LogHelper.LogExceptionMessage(new OpenIdConnectProtocolException(LogHelper.FormatInvariant(LogMessages.IDX21338, validationContext.ValidatedIdToken.Subject, sub)));
+
         }
 
         /// <summary>
@@ -392,7 +391,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
                 if (idToken.IssuedAt.Equals(DateTime.MinValue))
                     throw LogHelper.LogExceptionMessage(new OpenIdConnectProtocolException(LogHelper.FormatInvariant(LogMessages.IDX21314, JwtRegisteredClaimNames.Iat.ToLowerInvariant(), idToken)));
 
-                if (idToken.Issuer.Equals(string.Empty))
+                if (string.IsNullOrEmpty(idToken.Issuer))
                     throw LogHelper.LogExceptionMessage(new OpenIdConnectProtocolException(LogHelper.FormatInvariant(LogMessages.IDX21314, JwtRegisteredClaimNames.Iss.ToLowerInvariant(), idToken)));
 
                 // sub is required in OpenID spec; but we don't want to block valid idTokens provided by some identity providers
@@ -414,7 +413,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
                     throw LogHelper.LogExceptionMessage(new OpenIdConnectProtocolException(LogHelper.FormatInvariant(LogMessages.IDX21318, idToken)));
 
                 // if multiple audiences are present in the id_token, 'azp' claim should be present
-                if (Enumerable.Count(idToken.Audiences) > 1 && string.IsNullOrEmpty(azp))
+                if (idToken.Audiences.Count() > 1 && string.IsNullOrEmpty(azp))
                 {
                     LogHelper.LogWarning(LogMessages.IDX21339);
                 }
@@ -434,7 +433,6 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
             }
         }
 
-                }
         /// <summary>
         /// Returns a <see cref="HashAlgorithm"/> corresponding to string 'algorithm' after translation using <see cref="HashAlgorithmMap"/>.
         /// </summary>
@@ -593,7 +591,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         }
 
         /// <summary>
-        /// Validates that the <see cref="SecurityToken"/> contains the nonce.
+        /// Validates that the <see cref="IJsonWebToken"/> contains the nonce.
         /// </summary>
         /// <param name="validationContext">A <see cref="OpenIdConnectProtocolValidationContext"/> that contains the 'nonce' to validate.</param>
         /// <exception cref="ArgumentNullException">If 'validationContext' is null.</exception>
@@ -632,7 +630,6 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
 
             if (!string.Equals(nonceFoundInJwt, validationContext.Nonce, StringComparison.Ordinal))
                 throw LogHelper.LogExceptionMessage(new OpenIdConnectProtocolInvalidNonceException(LogHelper.FormatInvariant(LogMessages.IDX21321, validationContext.Nonce, nonceFoundInJwt, validationContext.ValidatedIdToken)));
-
 
             if (RequireTimeStampInNonce)
             {
