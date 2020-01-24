@@ -71,12 +71,6 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         /// <summary>
         /// This id_token is assumed to have audience, issuer, lifetime and signature validated.
         /// </summary>
-        [Obsolete("The 'ValidatedIdToken' property is obsolete. Please use 'ValidatedJwtToken' instead.")]
-        public JwtSecurityToken ValidatedIdToken { get; set; }
-
-        /// <summary>
-        /// This JWT security token is assumed to have audience, issuer, lifetime and signature validated.
-        /// </summary>
-        public IJsonWebToken ValidatedJsonWebToken { get; set; }
+        public IJsonWebToken ValidatedIdToken { get; set; }
     }
 }
