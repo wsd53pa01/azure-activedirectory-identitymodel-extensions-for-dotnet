@@ -72,7 +72,14 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             {
                 new ExceptionTheoryData
                 { 
-                Exception = new OpenIdConnectProtocolException("test1")
+                First = true,
+                TestId = "OpenIdConnectProtocolExceptionNoInnerException",
+                Exception = new OpenIdConnectProtocolException("OpenIdConnectProtocolExceptionNoInnerException")
+                },
+                new ExceptionTheoryData
+                {
+                TestId = "OpenIdConnectProtocolExceptionWithInnerException",
+                Exception = new OpenIdConnectProtocolException("OpenIdConnectProtocolExceptionWithInnerException", new ArgumentNullException())
                 }
             };
         }
