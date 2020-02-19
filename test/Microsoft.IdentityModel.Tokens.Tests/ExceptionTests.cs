@@ -72,15 +72,25 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             {
                 new ExceptionTheoryData
                 { 
-                First = true,
-                TestId = "OpenIdConnectProtocolExceptionNoInnerException",
-                Exception = new OpenIdConnectProtocolException("OpenIdConnectProtocolExceptionNoInnerException")
+                    First = true,
+                    TestId = "OpenIdConnectProtocolExceptionNoInnerException",
+                    Exception = new OpenIdConnectProtocolException("OpenIdConnectProtocolExceptionNoInnerException")
                 },
                 new ExceptionTheoryData
                 {
-                TestId = "OpenIdConnectProtocolExceptionWithInnerException",
-                Exception = new OpenIdConnectProtocolException("OpenIdConnectProtocolExceptionWithInnerException", new ArgumentNullException())
-                }
+                    TestId = "OpenIdConnectProtocolExceptionWithInnerException",
+                    Exception = new OpenIdConnectProtocolException("OpenIdConnectProtocolExceptionWithInnerException", new ArgumentNullException())
+                },
+                new ExceptionTheoryData
+                {
+                    TestId = "OpenIdConnectProtocolInvalidAtHashException",
+                    Exception = new OpenIdConnectProtocolInvalidAtHashException("OpenIdConnectProtocolInvalidAtHashExceptionNoInnerException")
+                },
+                new ExceptionTheoryData
+                {
+                    TestId = "OpenIdConnectProtocolInvalidAtHashExceptionWithInnerException",
+                    Exception = new OpenIdConnectProtocolException("OpenIdConnectProtocolInvalidAtHashExceptionWithInnerException", new ArgumentNullException())
+                },
             };
         }
 
