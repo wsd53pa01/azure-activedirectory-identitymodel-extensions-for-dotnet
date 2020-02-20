@@ -29,6 +29,7 @@ using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Protocols.WsFederation;
 using Microsoft.IdentityModel.TestUtils;
 using Xunit;
 
@@ -68,30 +69,58 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 
         public static TheoryData<ExceptionTheoryData> ExceptionSerializationTheoryData()
         {
-            return new TheoryData<ExceptionTheoryData>
+            var theoryData = new TheoryData<ExceptionTheoryData>();
+            AddOpenIdConnectExceptions(theoryData);
+            AddWsFederationExceptions(theoryData);
+            return theoryData;
+        }
+
+        private static void AddOpenIdConnectExceptions(TheoryData<ExceptionTheoryData> theoryData)
+        {
+            theoryData.Add(new ExceptionTheoryData
             {
-                new ExceptionTheoryData
-                { 
-                    First = true,
-                    TestId = "OpenIdConnectProtocolExceptionNoInnerException",
-                    Exception = new OpenIdConnectProtocolException("OpenIdConnectProtocolExceptionNoInnerException")
-                },
-                new ExceptionTheoryData
-                {
-                    TestId = "OpenIdConnectProtocolExceptionWithInnerException",
-                    Exception = new OpenIdConnectProtocolException("OpenIdConnectProtocolExceptionWithInnerException", new ArgumentNullException())
-                },
-                new ExceptionTheoryData
-                {
-                    TestId = "OpenIdConnectProtocolInvalidAtHashException",
-                    Exception = new OpenIdConnectProtocolInvalidAtHashException("OpenIdConnectProtocolInvalidAtHashExceptionNoInnerException")
-                },
-                new ExceptionTheoryData
-                {
-                    TestId = "OpenIdConnectProtocolInvalidAtHashExceptionWithInnerException",
-                    Exception = new OpenIdConnectProtocolException("OpenIdConnectProtocolInvalidAtHashExceptionWithInnerException", new ArgumentNullException())
-                },
-            };
+                TestId = nameof(OpenIdConnectProtocolException),
+                Exception = new OpenIdConnectProtocolException("OpenIdConnectProtocolException")
+            });
+
+            theoryData.Add(new ExceptionTheoryData
+            {
+                TestId = nameof(OpenIdConnectProtocolInvalidAtHashException),
+                Exception = new OpenIdConnectProtocolInvalidAtHashException("OpenIdConnectProtocolInvalidAtHashException")
+            });
+
+            theoryData.Add(new ExceptionTheoryData
+            {
+                TestId = nameof(OpenIdConnectProtocolInvalidCHashException),
+                Exception = new OpenIdConnectProtocolInvalidCHashException("OpenIdConnectProtocolInvalidCHashException")
+            });
+
+            theoryData.Add(new ExceptionTheoryData
+            {
+                TestId = nameof(OpenIdConnectProtocolInvalidNonceException),
+                Exception = new OpenIdConnectProtocolInvalidNonceException("OpenIdConnectProtocolInvalidNonceException")
+            });
+
+            theoryData.Add(new ExceptionTheoryData
+            {
+                TestId = nameof(OpenIdConnectProtocolInvalidStateException),
+                Exception = new OpenIdConnectProtocolInvalidStateException("OpenIdConnectProtocolInvalidStateException")
+            });
+        }
+
+        private static void AddWsFederationExceptions(TheoryData<ExceptionTheoryData> theoryData)
+        {
+            theoryData.Add(new ExceptionTheoryData
+            {
+                TestId = nameof(WsFederationException),
+                Exception = new WsFederationException("WsFederationException")
+            });
+
+            theoryData.Add(new ExceptionTheoryData
+            {
+                TestId = nameof(WsFederationReadException),
+                Exception = new WsFederationReadException("WsFederationReadException")
+            });
         }
 
         public class ExceptionTheoryData : TheoryDataBase
