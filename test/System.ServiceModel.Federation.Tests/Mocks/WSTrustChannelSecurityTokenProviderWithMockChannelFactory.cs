@@ -1,7 +1,6 @@
 ﻿using System.IdentityModel.Selectors;
 using System.Reflection;
 using System.ServiceModel.Channels;
-using System.ServiceModel.Security.Tokens;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.IdentityModel.Protocols.WsTrust;
 
@@ -13,6 +12,9 @@ namespace System.ServiceModel.Federation.Tests.Mocks
     /// </summary>
     class WSTrustChannelSecurityTokenProviderWithMockChannelFactory : WSTrustChannelSecurityTokenProvider
     {
+        public Entropy RequestEntropy { get; set; }
+        public int? RequestKeySizeInBits { get; set; }
+
         public WSTrustChannelSecurityTokenProviderWithMockChannelFactory(SecurityTokenRequirement tokenRequirement, string requestContext) :
             base(tokenRequirement, requestContext)
         { }
@@ -23,23 +25,24 @@ namespace System.ServiceModel.Federation.Tests.Mocks
 
         // Override channel factory creation with a mock channel factory so that it's possible to test WSTrustChannelSecurityTokenProvider
         // without actually making requests to an STS for tokens.
-        protected override ChannelFactory<IRequestChannel> CreateChannelFactory(IssuedSecurityTokenParameters issuedTokenParameters) =>
+        protected override ChannelFactory<IRequestChannel> CreateChannelFactory() =>
             new MockRequestChannelFactory();
 
-        // Update RST to include entropy
-        public void SetRequestEntropyAndKeySize(Entropy entropy, int? keySize)
+        protected override WsTrustRequest CreateWsTrustRequest()
         {
-            var request = typeof(WSTrustChannelSecurityTokenProvider)
-                .GetField("_wsTrustRequest", BindingFlags.Instance | BindingFlags.NonPublic)
-                .GetValue(this) as WsTrustRequest;
-            if (entropy != null)
+            WsTrustRequest request = base.CreateWsTrustRequest();
+
+            if (RequestEntropy != null)
             {
-                request.Entropy = entropy;
+                request.Entropy = RequestEntropy;
             }
-            if (keySize != null)
+
+            if (RequestKeySizeInBits.HasValue)
             {
-                request.KeySizeInBits = keySize;
+                request.KeySizeInBits = RequestKeySizeInBits;
             }
+
+            return request;
         }
 
         public void SetResponseSettings(MockResponseSettings responseSettings)

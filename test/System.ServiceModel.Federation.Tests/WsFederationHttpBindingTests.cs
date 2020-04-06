@@ -69,7 +69,7 @@ namespace System.ServiceModel.Federation.Tests
         {
             get => new TheoryData<WsFederationHttpBindingTheoryData>
             {
-                                new WsFederationHttpBindingTheoryData
+                new WsFederationHttpBindingTheoryData
                 {
                     IssuedTokenParametersSecurityKey = KeyingMaterial.RsaSecurityKey_1024,
                     IssuedSecurityTokenParametersKeyType = System.IdentityModel.Tokens.SecurityKeyType.AsymmetricKey,
